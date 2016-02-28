@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "Learning in Rust"
+title: Learning in Rust
+excerpt: "What are Rust and rusty-machine?"
 ---
-
-This is my first blog post like this so please bear with me.
 
 What is the aim of this post:
 
@@ -16,11 +15,17 @@ What is the aim of this post:
 
 Speed, safety. Trait structure which is hugely beneficial for us.
 
+
+``` python
+def function(arr):
+	for a in arr:
+		print a
+```
+
+
 ### What is Machine Learning?
 
-```
-"Field of study that gives computers the ability to learn without being explicitly programmed."
-``` - Arthur Samuel
+<q>Field of study that gives computers the ability to learn without being explicitly programmed.</q> - Arthur Samuel
 
 I think nowadays most people have a loose idea of what Machine Learning means. I wont spend too much time explaining the concept but will instead explain some terminology and give a concrete example.
 
