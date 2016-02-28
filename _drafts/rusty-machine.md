@@ -1,4 +1,7 @@
-# Learning in Rust
+---
+layout: post
+title: "Learning in Rust"
+---
 
 This is my first blog post like this so please bear with me.
 
@@ -16,8 +19,8 @@ Speed, safety. Trait structure which is hugely beneficial for us.
 ### What is Machine Learning?
 
 ```
-"Field of study that gives computers the ability to learn without being explicitly programmed." - Aaron Samuels **CHECK**
-```
+"Field of study that gives computers the ability to learn without being explicitly programmed."
+``` - Arthur Samuel
 
 I think nowadays most people have a loose idea of what Machine Learning means. I wont spend too much time explaining the concept but will instead explain some terminology and give a concrete example.
 
