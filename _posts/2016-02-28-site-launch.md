@@ -12,8 +12,10 @@ I'll be describing machine learning and how rust can help.
 
 ```rust
 pub trait Model<T, U> {
+	
 	pub fn train(inputs: T, targets: U);
 
 	pub fn predict(inputs: T) -> U;
+	
 }
 ```
