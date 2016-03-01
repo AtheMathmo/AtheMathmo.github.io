@@ -13,15 +13,36 @@ What is the aim of this post:
 
 ### What is Rust?
 
-Speed, safety. Trait structure which is hugely beneficial for us.
+I'm not going to discuss all of the wonderful and difficult features of Rust - but will give an abstract overview.
+
+Rust is a Systems Programming language emphasizing speed and safety. This is coupled with some nice high level code features. One of which is Traits. 
 
 
-``` python
-def function(arr):
-	for a in arr:
-		print a
+```rust
+pub trait Mammal {
+	pub fn speak();
+
+	pub fn eat() {
+		println!("I'm eating.");
+	}
+}
 ```
 
+The above is an example of a trait. It is a contract which can be implemented by an object - similar to an interface in other languages.
+
+```rust
+pub struct Dog;
+
+impl Mammal for Dog {
+	fn speak() {
+		println!("Woof!");
+	}
+}
+```
+
+Our dog can now speak by saying "Woof!" and adopts the default behaviour for eating.
+
+I think that's enough on rust for now. As we'll see later this trait structure can help us provide contraqts for our Machine Learning models.
 
 ### What is Machine Learning?
 
