@@ -66,7 +66,7 @@ Let's consider a concrete example: [The Logistic Regression Model](https://en.wi
 
 The logistic regression model will contain a vector of parameters, β. The model takes in a row of data x<sup>T</sup> and computes h(x<sup>T</sup>β) where h is the [Sigmoid Function](https://en.wikipedia.org/wiki/Sigmoid_function). Now if this values is greater than 0.5 we classify as positive, and otherwise negative. Going back to our terminology, different values of β represent different hypotheses.
 
-We can train our logistic regression model using a technique known as Gradient Descent Optimization. This will allow the model to learn what the underlying parameters, β, are - which we can use to make future predictions.
+We can train our logistic regression model using a technique known as Gradient Descent Optimization. This iteratively updates the parameters to provide a better explanation of the data (more of the data is classified correctly).
 
 ### So, how does Rust help with Machine Learning?
 
@@ -121,9 +121,9 @@ Of course this doesn't end with logistic regression and gradient descent. This f
 
 Maybe this is all sounding great. However, it is still early days and lot's of work needs to be done before we're close.
 
-The library is very immature. Though I think the vision is strong we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations, performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
+The library is very immature. Though I think the vision is strong we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations and performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
 
-I'd be naive also to ignore the fact that I have been the sole developer on this project for a while\*. There's likely some bad choices that seem good to me - I'd love to have those pointed to me!
+I'd be naive also to ignore the fact that I have been the sole developer on this project for a while\*. There's likely some bad choices that seem good to me - I'd love to have those pointed out!
 
 \* I have had some help in places. Thanks raulsi and all of the amazing people at [/r/rust](https://www.reddit.com/r/rust/) and SO!
 
