@@ -3,6 +3,7 @@ layout: default
 ---
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/syntax.css">
+	<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 
 <p class="meta">{{ page.date | date_to_string }}</p>
@@ -10,3 +11,10 @@ layout: default
 <div class="post">
   {{ content }}
 </div>
+
+<!-- Post comments -->
+{% if page.comments %}
+	<div class="notecomments">
+		{% include disqus.html %}	 
+	</div>
+{% endif %}

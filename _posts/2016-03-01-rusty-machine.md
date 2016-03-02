@@ -2,6 +2,7 @@
 layout: post
 title: Learning in Rust
 excerpt: "What are Rust and rusty-machine?"
+comments: true
 ---
 
 What is the aim of this post:
@@ -119,7 +120,7 @@ Of course this doesn't end with logistic regression and gradient descent. This f
 
 ## The down sides
 
-Maybe this is all sounding great. However, it is still early days and lot's of work needs to be done before we're close.
+Maybe this is all sounding great. However, it is still early days and lot's of work still needs to be done.
 
 The library is very immature. Though I think the vision is strong we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations and performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
 
@@ -137,7 +138,9 @@ There is definitely room for improvement on existing algorithms - both for perfo
 
 Among other things.
 
-### Call for Help
+In the slightly more distant future we'll need to decide how to proceed with the linear algebra as well. This will most likely mean using bindings to BLAS and LAPACK - probably via a community adopted linear algebra library.
+
+### Call for help
 
 [Rusty-Machine](https://github.com/AtheMathmo/rusty-machine) is an open-source project and is always looking for more people to jump in. If anything in this post has stood out to you please check out the [collaborating page](https://github.com/AtheMathmo/rusty-machine/blob/master/CONTRIBUTING.md).
 
