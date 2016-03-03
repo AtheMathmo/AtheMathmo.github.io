@@ -7,14 +7,17 @@ comments: true
 
 What is the aim of this post:
 
-- Why is Rust well suited for Machine Learning?
-- What is rusty-machine?
-- What's next?
-- A brief highlight of other community efforts.
+- [Why is Rust well suited for Machine Learning?](#rust)
+- [What is rusty-machine?](#rusty-machine)
+- [Where are we now?](#where-are-we-now)
+- [What's next?](#next-steps)
+- [A brief highlight of other community efforts.](#rust-sounds-cool-but-rusty-machine-not-so-much)
 
 I'll be describing very briefly the work I've been doing on rusty-machine. I'd love to get some feedback - both on this post and on the library.
 
-### What is [Rust](https://www.rust-lang.org/)?
+<a name="rust"></a>
+
+## What is [Rust](https://www.rust-lang.org/)?
 
 I'm not going to discuss all of the wonderful and difficult features of Rust - but will give a very brief overview of some parts.
 
@@ -55,7 +58,7 @@ Though there's plenty more to say, we'll leave Rust there for now. As we'll see 
 
 I think nowadays most programmers have a rough idea of what Machine Learning means. I wont spend too much time explaining the concept but will instead explain some terminology and give a concrete example.
 
-In Machine Learning we have `Models`. These models represent a set of hypotheses which can be used to explain a pattern which is present in some data. By giving the model some data we can `train` it and have it learn this pattern - the best hypothesis to fit the data. The model can then be used to `predict` new patterns from data it hasn't seen before.
+In Machine Learning we have `Models`. These models represent a set of hypotheses which can be used to explain a pattern which is present in some data. By giving the model some data we can `train` it and have it learn this pattern - by choosing the best hypothesis to fit the data. The model can then be used to `predict` new patterns from data that it hasn't seen before.
 
 The key take-aways are:
 
@@ -65,27 +68,29 @@ The key take-aways are:
 
 Let's consider a concrete example: [The Logistic Regression Model](https://en.wikipedia.org/wiki/Logistic_regression). This model is used for classification. For example we might want to classify whether a tumor is malignant or benign using features of the tumor such as size, symmetry, compactness, etc.
 
-The logistic regression model will contain a vector of parameters, β. The model takes in a row of data x<sup>T</sup> and computes h(x<sup>T</sup>β) where h is the [Sigmoid Function](https://en.wikipedia.org/wiki/Sigmoid_function). Now if this values is greater than 0.5 we classify as positive, and otherwise negative. Going back to our terminology, different values of β represent different hypotheses.
+The logistic regression model will contain a vector of parameters, β. When `predict`ing from the model we take a row of data x<sup>T</sup> and compute h(x<sup>T</sup>β) where h is the [Sigmoid Function](https://en.wikipedia.org/wiki/Sigmoid_function). Now if this values is greater than 0.5 we classify as positive (malignant), and otherwise negative (benign). Going back to our terminology: different values of β represent different hypotheses.
 
-We can train our logistic regression model using a technique known as Gradient Descent Optimization. This iteratively updates the parameters to provide a better explanation of the data (more of the data is classified correctly).
+We can `train` our logistic regression model using a technique known as Gradient Descent Optimization. This iteratively updates the parameters to provide a better explanation of the data (more of the data is classified correctly). I wont go into the details here.
 
 ### So, how does Rust help with Machine Learning?
 
 Traits allow us to create well structured high-level code whilst maintaining low-level performance. Hopefully we can find a way to provide developers access to fast iterative machine learning with good performance and scaling.
 
-Of course this does exist in places now, e.g. [scikit-learn](http://scikit-learn.org/). But hey, more of a good thing can't be bad! And Rust provides the unique opportunity to achieve all of this within a single language (maybe). And hopefully we can achieve this with a nice clean API to top it all off.
+Of course this does exist in places now, e.g. [scikit-learn](http://scikit-learn.org/). But hey, more of a good thing can't be bad! And Rust provides the (somewhat) unique opportunity to achieve all of this within a single language. And hopefully we can do this with a nice clean API to top it all off.
 
 ---
 
+<a name="rusty-machine"></a>
+
 ## [Rusty-Machine](https://github.com/AtheMathmo/rusty-machine)
 
-[Rusty-Machine](https://github.com/AtheMathmo/rusty-machine) is a general purpose machine learning library. Implemented entirely in Rust. It is still very much in the early stages of development and so the following information is likely to be outdated in future. I hope to provide an overview of what rusty-machine is trying to achieve.
+[Rusty-machine](https://github.com/AtheMathmo/rusty-machine) is a general purpose machine learning library. Implemented entirely in Rust. It is still very much in the early stages of development and so the following information is likely to be outdated in future. I hope to provide an overview of what rusty-machine is trying to achieve.
 
-Rust aims to provide a consistent, high-level API for users without compromising performance. This consistency is achieved through Rust's trait system.
+Rusty-machine aims to provide a consistent, high-level API for users without compromising performance. This consistency is achieved through Rust's trait system.
 
 ### How do we use traits?
 
-The trait set up allows users to easily implement a model with clean access to the necessary components. It is also very easy for the user to modify the models; updating parameters and swapping out components (such as the Gradient Descent algorithm).
+By using traits we allow users to easily implement a model with clean access to the necessary components. It is also very easy for the user to modify the models; updating parameters and swapping out components (such as the Gradient Descent algorithm) is kept simple.
 
 ```rust
 /// Trait for supervised models.
@@ -99,7 +104,7 @@ pub trait SupModel<T,U> {
 }
 ```
 
-The above is the trait for a specific type of model - a `Supervised` model. This means that the model is trained using some example outputs as well as the input data. There is also a trait for `UnSupervised` models which looks very similar (except that we do not have any targets).
+The above is the trait for a specific type of model - a `Supervised` model. This means that the model is trained using some example outputs (called `targets`) as well as the `inputs`. There is also a trait for `UnSupervised` models which looks very similar (except that we do not have any `targets`).
 
 When a user wants to use a model they `train` and `predict` from the model via this trait. This is the essence of our consistent API - all models are accessed via the same core methods. We balance this rigid access by allowing the models themselves to be very customisable. Let's consider our Logistic Regression model.
 
@@ -116,17 +121,23 @@ This looks a little messy... Here `A` is a generic type. The line beginning `whe
 
 The `LogisticRegressor` struct allows any Gradient Descent algorithm that fits the base struct to be used. There are a number of built-in algorithms (Stochastic GD, etc.) or alternatively the user can create their own and plug them in. This relationship is two-fold - developers can create their own models and utilize the existing gradient descent algorithms.
 
-Of course this doesn't end with logistic regression and gradient descent. This flexibility and customisation is an aim throughout.
+Of course this doesn't end with logistic regression and gradient descent. This flexibility and customisation is an aim throughout rusty-machine.
 
-## The down sides
+## Where are we now?
 
-Maybe this is all sounding great. However, it is still early days and lot's of work still needs to be done.
+Rusty-machine currently has a fairly comprehensive linear algebra library. This certainly isn't state of the art but it is working well enough (for now...). The linear algebra library also provides some common data manipulation methods.
 
-The library is very immature. Though I think the vision is strong we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations and performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
+In terms of machine learning the library is growing and will continue to do so. Currently there is support for:
 
-I'd be naive also to ignore the fact that I have been the sole developer on this project for a while\*. There's likely some bad choices that seem good to me - I'd love to have those pointed out!
+- Linear Regression
+- Logistic Regression
+- Generalized Linear Models
+- K-Means Clustering
+- Neural Networks
+- Gaussian Process Regression
+- Support Vector Machines
 
-\* I have had some help in places. Thanks raulsi and all of the amazing people at [/r/rust](https://www.reddit.com/r/rust/) and SO!
+All of the above aim to provide a wealth of customisation. For example, different kernels for GPs, different cost and activation functions for Neural Networks, and more. In addition to those that are built-in it is also easy to create your own kernels/cost functions and use these within the existing models.
 
 ## Next steps
 
@@ -138,7 +149,17 @@ There is definitely room for improvement on existing algorithms - both for perfo
 
 Among other things.
 
-In the slightly more distant future we'll need to decide how to proceed with the linear algebra as well. This will most likely mean using bindings to BLAS and LAPACK - probably via a community adopted linear algebra library.
+In the slightly more distant future we'll need to decide how to proceed with the linear algebra as well. This will most likely mean using bindings to BLAS and LAPACK - probably via some central community adopted linear algebra library.
+
+### The down sides
+
+Maybe this is all sounding great. However, it is still early days and lot's of work still needs to be done.
+
+I think the vision is strong but we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations and performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
+
+I'd be naive also to ignore the fact that I have been the sole developer on this project for a while\*. There's likely some bad choices that seem good to me - I'd love to have those pointed out!
+
+\* I have had some help in places. Thanks raulsi and all of the amazing people at [/r/rust](https://www.reddit.com/r/rust/) and SO!
 
 ### Call for help
 
