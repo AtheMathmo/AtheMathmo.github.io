@@ -52,6 +52,12 @@ footer {
     font-size: .8em;
 }
 
+blockquote {
+  background-color: #002b36;
+  border-radius: 15px;
+  padding: 10px;
+}
+
 .post p {
     font-size: 1em;
 }
