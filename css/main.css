@@ -75,3 +75,8 @@ ul.posts li {
 p.meta {
     color: #4d4d4d;
 }
+
+p.maths {
+    text-align: center;
+    font-size: 1.4em;
+}

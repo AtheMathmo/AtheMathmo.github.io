@@ -16,7 +16,9 @@ This post is aimed at readers who are familiar with Rust and want some insight i
 
 I will pick a particular problem that can be solved using machine learning and talk (briefly) through one solution. This isn't intended as a tutorial on this particular technique but will instead give some context on why machine learning is difficult.
 
-Afterwards I'll be describing very briefly the work I've been doing on rusty-machine. I'd love to get some feedback - both on this post and on the library.
+Afterwards I'll be describing briefly the work I've been doing on rusty-machine. I'd love to get some feedback - both on this post and on the library.
+
+*Note: I'm planning on doing a write-up in a similar vein for those who are not so familiar with Rust. I'll also start to write about some particular features of rusty-machine in the future!*
 
 ## Let's talk about a machine learning problem
 
@@ -30,21 +32,21 @@ This is a problem that we can address using machine learning.
 
 There are a number of different machine learning tools that can be used to solve this problem. We will only consider one of these tools - [The Logistic Regression Model](https://en.wikipedia.org/wiki/Logistic_regression).
 
-The high-level idea behind logistic regression is that we take a weighted sum of the tumors features and then scale this value to be between 0 and 1 - so that it can be thought of as the probability that a tumor is malignant. For example if we have measurements for the volume and the average radius of the tumor (denoted x<sub>1</sub> and x<sub>2</sub> respectively). Then our weighted sum would be given by:
+The high-level idea behind logistic regression is that we take a weighted sum of the tumors features and then scale this value to be between 0 and 1 - so that it can be thought of as the probability that a tumor is malignant. For example if we have measurements for the volume and the average radius of the tumor (denoted x<sub>1</sub> and x<sub>2</sub> respectively). Let β be the vector of weight parameters. Then our weighted sum would be given by:
 
-<p class="maths">x<sup>T</sup>β = β<sub>0</sub> + β<sub>1</sub>x<sub>1</sub> + β<sub>2</sub>x<sub>2</sub></p>
+<p class="maths"><b>x</b><sup>T</sup><b>β</b> = β<sub>0</sub> + β<sub>1</sub>x<sub>1</sub> + β<sub>2</sub>x<sub>2</sub>.</p>
 
-where the β variables make up a vector of parameters in the logistic regression model. Note that here we have appended x<sub>0</sub> = 0 to our features. This is a common practice used to model an *intercept* term. The method we use to scale this weighted sum is where the logistic regression model gets it's name, the [Logistic Function](https://en.wikipedia.org/wiki/Logistic_function):
+The **β** vector makes up the parameters of the logistic regression model. Note that here we have appended x<sub>0</sub> = 1 to our features. This is a common practice used to model an *intercept* term. The method we use to scale this weighted sum is where the logistic regression model gets its name, the [Logistic Function](https://en.wikipedia.org/wiki/Logistic_function):
 
 <img src="{{ site.url }}/assets/logist_func.png" alt="The Logistic Function" style="width: 100%; border-radius: 30px" />
 
-To decide whether a tumor is malignant or benign we compute h(x<sup>T</sup>β). This tells us the probability that the tumor is malignant (greater than 0.5 suggests the tumor is likely to be malignant).
+To decide whether a tumor is malignant or benign we compute h(**x**<sup>T</sup>**β**). This tells us the probability that the tumor is malignant (greater than 0.5 suggests the tumor is likely to be malignant).
 
-All of this is great, but we're not learning yet. The idea behind logistic regression is that we can `learn` what the β vector should be based on some sample (training) data. A common approach to doing this is through [Gradient Descent optimization](https://en.wikipedia.org/wiki/Gradient_descent). This involves defining a cost function and finding the parameters which minimize this cost. I won't go into the details here but there are plenty of great resources online.
+All of this is great, but we're not learning yet. The idea behind logistic regression is that we can learn what the **β** vector should be based on some sample (training) data. This process is known as `training` the model. A common approach to doing this is through [Gradient Descent optimization](https://en.wikipedia.org/wiki/Gradient_descent). This involves defining a cost function and finding the parameters which minimize this cost. I won't go into the details here but there are plenty of great resources online.
 
 ## Why is machine learning hard?
 
-As I said above there are many different techniques we could have used to classify the tumors. Even once we have found a technique there are many other considerations. Which algorithm do we use to train the model? How do we construct our cost function? How do we choose the best subset of the data to represent our problem?
+As I said above there are many different techniques we could have used to classify the tumors. Even once we have chosen a technique there are many other considerations. Which algorithm do we use to train the model? How do we construct our cost function? How do we choose the best subset of the data to represent our problem?
 
 Machine learning comes with another challenge which is linked to the above. We often work with huge amounts of data which makes training our models take a very long time. We need our tools to emphasize performance without sacrificing the flexibility required to explore all of the different options associated with even a single model.
 
