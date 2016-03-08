@@ -16,9 +16,11 @@ This post is aimed at readers who are familiar with Rust and want some insight i
 
 I will pick a particular problem that can be solved using machine learning and talk (briefly) through one solution. This isn't intended as a tutorial on this particular technique but will instead give some context on why machine learning is difficult.
 
-Afterwards I'll be describing briefly the work I've been doing on rusty-machine. I'd love to get some feedback - both on this post and on the library.
+Afterwards I'll be describing briefly the work I've been doing on rusty-machine. Rusty-machine is a general purpose machine learning library implemented entirely in Rust. With this post I will illustrate with examples some of the strengths of rusty-machine. This is by no means a complete summary - though I intend to cover more completely how rusty-machine is put together in future posts.
 
-*Note: I'm planning on doing a write-up in a similar vein for those who are not so familiar with Rust. I'll also start to write about some particular features of rusty-machine in the future!*
+**I'd love to get some feedback - both on this post and on the library.**
+
+*Note: I'm planning on doing a write-up in a similar vein for those who are not so familiar with Rust.*
 
 ## Let's talk about a machine learning problem
 
@@ -70,13 +72,13 @@ The key take-aways are:
 
 ## [Rusty-machine](https://github.com/AtheMathmo/rusty-machine)
 
-[Rusty-machine](https://github.com/AtheMathmo/rusty-machine) is a general purpose machine learning library. Implemented entirely in Rust. It is still very much in the early stages of development and so the following information is likely to be outdated in future. I hope to provide an overview of what rusty-machine is trying to achieve.
+[Rusty-machine](https://github.com/AtheMathmo/rusty-machine) is a general purpose machine learning library. Implemented entirely in Rust. It is still very much in the early stages of development and so the following information is likely to be outdated in the future. I hope to provide an overview of what rusty-machine is trying to achieve.
 
 Rusty-machine aims to provide a consistent, high-level API for users without compromising performance. This consistency is achieved through Rust's trait system.
 
-### How do we use traits?
+### A consistent API
 
-By using traits we allow users to easily implement a model with clean access to the necessary components. It is also very easy for the user to modify the models; updating parameters and swapping out components (such as the Gradient Descent algorithm) is kept simple.
+By using traits we allow users to easily implement a model with clean access to the necessary parts. We hope that we can provide the foundation of each model and make it easy for the user to choose how the learning problem is solved. This could involve choosing from a common set of techniques or alternatively plugging their own tools in. This is in contrast to some (very good) libraries which provide their flexibility through bloated APIs.
 
 ```rust
 /// Trait for supervised models.
@@ -107,7 +109,7 @@ This looks a little messy... Here `A` is a generic type. The line beginning `whe
 
 The `LogisticRegressor` struct allows any Gradient Descent algorithm that fits the base struct to be used. There are a number of built-in algorithms (Stochastic GD, etc.) or alternatively the user can create their own and plug them in. This relationship is two-fold - developers can create their own models and utilize the existing gradient descent algorithms.
 
-Of course this doesn't end with logistic regression and gradient descent. This flexibility and customisation is an aim throughout rusty-machine. Let's consider another example:
+Of course this doesn't end with logistic regression and gradient descent. This flexibility and customisation is an aim throughout rusty-machine. Let's consider a slightly more involved example:
 
 ```rust
 pub struct GenLinearModel<C: Criterion> {
@@ -158,11 +160,11 @@ In the slightly more distant future we'll need to decide how to proceed with the
 
 ### The down sides
 
-Maybe this is all sounding great. However, it is still early days and lot's of work still needs to be done.
+Maybe this is all sounding great. However, it is still early days and lot's of work still needs to be done. We haven't met our goal of complete flexibility and it will be a while before we do.
 
 I think the vision is strong but we're a long way off and lack a lot of key components for a Machine Learning library. Consistent data handling, visualizations and performance are all core areas that need a lot of work. Even after this many would consider validation and pipelines too important to miss.
 
-I said above that rusty-machine is implemented entirely in Rust. Although this is certainly a positive in a lot of ways there is definitely the need to introduce some foreign language libraries. It will be very difficult to match the performance and care that has gone into many scientific libraries: libsvm, LAPACK, BLAS, etc.
+I said above that rusty-machine is implemented entirely in Rust. Although this is certainly a positive in a lot of ways there is definitely the need to introduce some foreign language libraries. It will be very difficult to match the performance and care that has gone into many scientific libraries: libsvm, LAPACK, BLAS and many others.
 
 I'd be naive also to ignore the fact that I have been the sole developer on this project for a while\*. There's likely some bad choices that seem good to me - I'd love to have those pointed out!
 
@@ -171,6 +173,8 @@ I'd be naive also to ignore the fact that I have been the sole developer on this
 ### Call for help
 
 [Rusty-Machine](https://github.com/AtheMathmo/rusty-machine) is an open-source project and is always looking for more people to jump in. If anything in this post has stood out to you please check out the [collaborating page](https://github.com/AtheMathmo/rusty-machine/blob/master/CONTRIBUTING.md).
+
+I should also emphasize that the project doesn't just need people with machine learning expertise. There is a need for work on data handling and loading, visualizations, and other things. Even within the machine learning parts it would certainly help if some Rust experts helped out with optimizations.
 
 ### Rust sounds cool... But rusty-machine not so much
 
