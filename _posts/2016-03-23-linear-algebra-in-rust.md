@@ -150,5 +150,6 @@ As I mentioned briefly above I do plan on maintaining and developing the core li
 - [blas-sys](https://github.com/stainless-steel/blas-sys) : Generic blas bindings used by ndarray.
 - [rust-blas](https://github.com/mikkyang/rust-blas) : BLAS bindings for Rust.
 - [nalgebra](https://github.com/sebcrozet/nalgebra/) : Low dimensional linear algebra.
+- [servo/euclid](https://github.com/servo/euclid) : Basic linear algebra used by Servo.
 
 There are probably a lot of others. This is a pretty active area of development for the Rust community.
