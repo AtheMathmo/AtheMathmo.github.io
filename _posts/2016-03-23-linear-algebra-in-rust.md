@@ -122,7 +122,7 @@ fn add(mut self, f: Matrix<T>) -> Matrix<T> {
 }
 ```
 
-When we want to allocate new memory we use similar tricks with a few more intricacies. I'll exclude the details for brevity but the only real difference as that we allocate new memory and assign to this instead of mutating.
+When we want to allocate new memory we use similar tricks with a few more intricacies. I'll exclude the details for brevity but the only real difference is that we allocate new memory and assign to this instead of mutating.
 
 We utilize these functions when we implement `Matrix` and `Vector` operations. This provides clean reusable code which is vectorized. It also worth noting briefly that this approach opens up an easy avenue into parallelization - we can easily break up the matrix data (using `split_at` and `split_at_mut` for slices) and run the above functions in parallel. This will come in handy when doing divide and conquer matrix multiplication for example.
 
@@ -137,8 +137,8 @@ There are a few things coming up. I'm currently working on implementing `MatrixS
 - Separate `linalg` module from rusty-machine.
 - Parallelization - work has been done on multiplication.
 - Optimizing decomposition and data manipulation.
-- Evaluate the future of `Vector`.
 - Adding [SVD](https://en.wikipedia.org/wiki/Singular_value_decomposition) and improving eigendecomposition.
+- Evaluate the future of `Vector`.
 
 This last point is probably the most complicated. There are two immediate solutions: remove `Vector` entirely; implement a shared trait for `Matrix` and `Vector`. There are other options as well (i.e. misusing specialization).
 
@@ -147,8 +147,10 @@ As I mentioned briefly above I do plan on maintaining and developing the core li
 ### Other community libraries
 
 - [ndarray](https://github.com/bluss/rust-ndarray) : Arrays inspired by numpy.
-- [ndarray-blas](https://github.com/bluss/rust-ndarray/tree/master/ndarray-rblas) : Blas bindings used by ndarray.
+- [blas-sys](https://github.com/stainless-steel/blas-sys) : Generic blas bindings used by ndarray.
 - [rust-blas](https://github.com/mikkyang/rust-blas) : BLAS bindings for Rust.
 - [nalgebra](https://github.com/sebcrozet/nalgebra/) : Low dimensional linear algebra.
+- [servo/euclid](https://github.com/servo/euclid) : Basic linear algebra used by Servo.
+- [cgmath](https://github.com/bjz/cgmath) : Linear algebra for game development.
 
 There are probably a lot of others. This is a pretty active area of development for the Rust community.
