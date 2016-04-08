@@ -1,0 +1,57 @@
+---
+layout: post
+title: Naive Bayes Classifiers in Rust
+excerpt: "Adding NB Classifiers to rusty-machine."
+comments: false
+---
+
+I have just filed a new PR which adds Naive Bayes Classifiers to [rusty-machine](https://github.com/AtheMathmo/rusty-machine). I thought it would be fun to talk through some of the process I went through whilst creating this model.
+
+The contents of the post will be loosely broken up as follows:
+
+- What is a Naive Bayes Classifier?
+- Design
+- Implementing the rusty-machine traits
+- Writing the model code
+- Testing
+- What's missing?
+
+## Naive Bayes Classifiers
+
+[Naive Bayes Classifiers](https://en.wikipedia.org/wiki/Naive_Bayes_classifier) are a very simple but effective classification model. They provide a probabilistic model that separates out our data into classes. I wont dig too much into the maths (there are plenty of resources online) but will include a rough overview.
+
+The model treats each input vector as independent (in the probabilistic sense) features. Each class within the model represents a distribution for a collection of these vectors. When training we are computing the distribution for each class based on our input data. When testing we are finding the class which the data is most likely to belong to.
+
+Using the independence assumption and Bayesian statistics we can compute the distribution for the classes as a product of the probability that the data lies in each class. *Maybe elaborate with maths?*
+
+## Designing this model in Rust
+
+- How do we implement SupModel.
+- How generic/flexible should we be? How can we allow others to extend our code?
+- What distributions will we support?
+- Where will our layers of abstraction fall? (How much is distribution dependent, and how much naive bayes dependent)
+
+## Implementing the rusty-machine traits
+
+- We want a `Distribution` trait.
+- We must implement `SupModel`. (Note - can be semi supervised but not in scope for now).
+- Code samples for each, following the design discussion.
+
+## Writing the model code
+
+- How does the NB model interact with these traits?
+- What does the core model code look like?
+- How are we accounting for extensibility?
+
+## Testing
+
+- We want to test the model for each of the distributions.
+- Simple: Make some dummy data which has obvious class partitions and test that we can learn these.
+- More advanced: Try on some real world data. Or better yet, generate some data from the model assumptions and try to learn the "dummy" model.
+
+## What's missing?
+
+- Checking model inputs (Bernoulli is flags, Multinomial is counts, etc.).
+- Allowing specification of pseudo counts on the discrete models.
+- Partial training (so we can go in batches).
+- Optimal code : it is pretty inefficient and scrappy in places.

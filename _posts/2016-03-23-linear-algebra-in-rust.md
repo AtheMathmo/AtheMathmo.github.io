@@ -2,7 +2,7 @@
 layout: post
 title: Linear Algebra in Rust
 excerpt: "Pure rust linear algebra in rusty-machine."
-comments: false
+comments: true
 ---
 
 In my previous post I focused on the `learning` module of rusty machine. This time I'll be focusing on the `linalg` module. I'll be covering:
