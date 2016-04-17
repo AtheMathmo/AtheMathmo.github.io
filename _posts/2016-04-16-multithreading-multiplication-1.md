@@ -27,6 +27,15 @@ test linalg::matrix::mat_mul_128_100000     ... bench: 211,979,455 ns/iter (+/- 
 test linalg::matrix::mat_paramul_128_100000 ... bench: 112,330,287 ns/iter (+/- 4,083,264)
 ```
 
+For comparison, here is the old implementation:
+
+```
+test linalg::matrix::mat_mul_128_100        ... bench:   2,078,298 ns/iter (+/- 132,209)
+test linalg::matrix::mat_mul_128_1000       ... bench:  20,901,834 ns/iter (+/- 576,653)
+test linalg::matrix::mat_mul_128_10000      ... bench: 228,113,515 ns/iter (+/- 2,512,868)
+test linalg::matrix::mat_mul_128_100000     ... bench: too damn long /iter (+/- ____)
+```
+
 _If requested I'll try to add some benchmarks for parallel BLAS._
 
 This was run on my pretty average laptop with 4 cores. The implementation is still basic and so there is some overhead that can be removed quite easily.
