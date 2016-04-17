@@ -10,24 +10,31 @@ This will be a fairly short post. I'm labeling this **Part I** as I'm hoping to 
 
 Recently I implemented [bluss](https://github.com/bluss)' [matrixmultiply](https://github.com/bluss/matrixmultiply) in [rusty-machine](https://github.com/AtheMathmo/rusty-machine). Matrixmultiply is an awesome, lightweight library that provides fast, [native implementations](http://bluss.github.io/rust/2016/03/28/a-gemmed-rabbit-hole/) of matrix multiplication in Rust.
 
-The gains were pretty huge (up to 10x improvements on my naive implementation) and this inspired me to see if we could get even better by using multithreading.
+The gains were pretty huge (upwards of 10x improvements on my naive implementation) and this inspired me to see if we could get even better by using multithreading.
 
 Parallelizing matrix multiplication isn't easy and there are a few different approaches. For now I have been playing around with a pretty simple divide and conquer implementation. The idea is that we find the largest dimension and if it is greater than some threshold we split the matrix along it and repeat recursively on the two new halves. Once we are below the threshold we perform our _usual_ matrix multiplication. The algorithm is summarized nicely [here](https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm#Non-square_matrices). I'm using [rayon](https://github.com/nikomatsakis/rayon) to achieve the parallelism.
 
 Initial results are looking pretty good!
 
 ```
-test linalg::matrix::mat_mul_128_100        ... bench:     213,072 ns/iter (+/- 47,042)
-test linalg::matrix::mat_paramul_128_100    ... bench:     270,320 ns/ iter (+/- 167,244)
-test linalg::matrix::mat_mul_128_1000       ... bench:   1,996,190 ns/iter (+/- 66,789)
-test linalg::matrix::mat_paramul_128_1000   ... bench:   1,253,315 ns/iter (+/- 1,715,936)
-test linalg::matrix::mat_mul_128_10000      ... bench:  21,215,542 ns/iter (+/- 793,933)
-test linalg::matrix::mat_paramul_128_10000  ... bench:  11,659,379 ns/iter (+/- 2,533,431)
-test linalg::matrix::mat_mul_128_100000     ... bench: 211,979,455 ns/iter (+/- 13,750,261)
-test linalg::matrix::mat_paramul_128_100000 ... bench: 112,330,287 ns/iter (+/- 4,083,264)
+test linalg::matrix::mat_mul_128_100        ... bench:     221,813 ns/iter (+/- 28,576)
+test linalg::matrix::mat_paramul_128_100    ... bench:     213,257 ns/iter (+/- 16,667)
+test linalg::matrix::mat_blasmul_128_100    ... bench:     107,305 ns/iter (+/- 14,451)
+
+test linalg::matrix::mat_mul_128_1000       ... bench:   1,994,442 ns/iter (+/- 79,774)
+test linalg::matrix::mat_paramul_128_1000   ... bench:   1,147,764 ns/iter (+/- 136,592)
+test linalg::matrix::mat_blasmul_128_1000   ... bench:     996,405 ns/iter (+/- 109,778)
+
+test linalg::matrix::mat_mul_128_10000      ... bench:  21,185,583 ns/iter (+/- 794,584)
+test linalg::matrix::mat_paramul_128_10000  ... bench:  11,687,473 ns/iter (+/- 638,582)
+test linalg::matrix::mat_blasmul_128_10000  ... bench:  10,278,981 ns/iter (+/- 973,273)
+
+test linalg::matrix::mat_mul_128_100000     ... bench: 210,618,866 ns/iter (+/- 4,908,516)
+test linalg::matrix::mat_paramul_128_100000 ... bench: 112,120,346 ns/iter (+/- 6,052,281)
+test linalg::matrix::mat_blasmul_128_100000 ... bench: 102,699,089 ns/iter (+/- 9,024,207)
 ```
 
-For comparison, here is the old implementation:
+The BLAS benchmarks are taken from [ndarray](https://github.com/bluss/rust-ndarray) using openblas. For comparison, here is the old implementation:
 
 ```
 test linalg::matrix::mat_mul_128_100        ... bench:   2,078,298 ns/iter (+/- 132,209)
@@ -35,8 +42,6 @@ test linalg::matrix::mat_mul_128_1000       ... bench:  20,901,834 ns/iter (+/- 
 test linalg::matrix::mat_mul_128_10000      ... bench: 228,113,515 ns/iter (+/- 2,512,868)
 test linalg::matrix::mat_mul_128_100000     ... bench: too damn long /iter (+/- ____)
 ```
-
-_If requested I'll try to add some benchmarks for parallel BLAS._
 
 This was run on my pretty average laptop with 4 cores. The implementation is still basic and so there is some overhead that can be removed quite easily.
 
