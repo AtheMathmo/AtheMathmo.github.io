@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Multithreaded matrix multiplication in Rust - Part I
-excerpt: "What does high performance linear algebra look like?"
+excerpt: "A first step to parallelized linear algebra."
 comments: true
 ---
 
