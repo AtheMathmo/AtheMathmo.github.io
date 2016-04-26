@@ -5,6 +5,10 @@ excerpt: "A first step to parallelized linear algebra."
 comments: true
 ---
 
+<h3><a href="/2016/04/25/multithreading-multiplication-2.html">Part II</a></h3>
+
+---
+
 This will be a fairly short post. I'm labeling this **Part I** as I'm hoping to give a more full report once I see this work through. It would be good to get some feedback and more eyes on this in the mean time though! Lots of credit to [bluss](https://github.com/bluss) here - he provided an awesome library and lots of support (and code to steal) for this work.
 
 

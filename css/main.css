@@ -58,6 +58,14 @@ blockquote {
   padding: 10px;
 }
 
+figcaption {
+  color: #e6e6e6;
+  background-color: #002b36;
+  border-radius: 15px;
+  padding: 10px;
+  font-size: .9em;
+}
+
 .post p {
     font-size: 1em;
 }
