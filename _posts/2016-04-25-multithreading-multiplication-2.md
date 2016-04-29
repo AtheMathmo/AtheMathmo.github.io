@@ -2,7 +2,7 @@
 layout: post
 title: Multithreaded matrix multiplication in Rust - Part II
 excerpt: "A second step to parallelized linear algebra."
-comments: false
+comments: true
 ---
 
 <h3><a href="/2016/04/16/multithreading-multiplication-1.html">Part I</a></h3>
