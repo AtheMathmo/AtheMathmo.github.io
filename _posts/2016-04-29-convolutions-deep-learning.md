@@ -5,7 +5,7 @@ excerpt: "Convolutions and Neural Networks"
 comments: true
 ---
 
-In my ongoing attempt to reinvent the wheel I've turned my eye to convolutions. Convolutions are a powerful technique in image processing that let you modify images. You have probably seen/used these techniques to blur or sharpen an image.
+In my ongoing attempt to reinvent the wheel I've turned my eye to convolutions. Convolutions are a powerful technique in image processing that let you modify images. You have probably seen/used these techniques to blur or sharpen an image. Convolutions also play a key part in deep learning - as I'll briefly cover in this post.
 
 ### What is a convolution?
 
@@ -48,7 +48,7 @@ Hopefully the above highlights that convolutions can be very useful for extracti
 
 Enter Neural Networks! Neural Networks are a machine learning algorithm which allows us to learn approximations of unknown functions. The algorithm chains together many layers of _weights_ which when placed together build a _network_. This _network_ can then be used to infer the unknown function from some data. The idea is that we learn the values of the weights which give the closest approximation to the function. For a slightly less abstract example, let's imagine that we have lots of photos of cats and dogs. A neural network can be used to automatically identify which photos contain dogs and which contain cats. The unknown function here takes value `0` for a cat photo and `1` for a dog.
 
-So how do convolutions fit in? Instead of setting specific values for our convolution we can choose some unknown weights. These weights can then be learned automatically by the neural network. In this way we completely remove the need to tweak the convolution ourselves. The neural network does all the heavy lifting! The addition of convolutions to neural networks make them a great tool for computer vision.
+So how do convolutions fit in? Instead of setting specific values for our convolution we can choose some unknown weights. These weights can then be learned automatically by the neural network. In this way we completely remove the need to tweak the convolution ourselves. The neural network does all the heavy lifting! The addition of convolutions to neural networks make them a great tool for computer vision. They allow the neural network to automatically learn the relevant features from a set of images.
 
 This is an incredibly powerful and popular technique. Which leads us nicely into the next section.
 
