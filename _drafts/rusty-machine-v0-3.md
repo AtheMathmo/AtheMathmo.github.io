@@ -23,7 +23,7 @@ There have also been some additions to the learning module. We've introduce two 
 
 Version 0.3 also brings some new ML tools: Regularization and AdaGrad. Regularization hasn't been fully implemented yet but is in place for Neural Nets - the other relevant models will follow soon! 
 
-You can read the full changelog [here](https://github.com/AtheMathmo/rusty-machine/bloc/master/CHANGELOG.md).
+You can read the full changelog [here](https://github.com/AtheMathmo/rusty-machine/blob/master/CHANGELOG.md).
 
 ## What's next?
 
