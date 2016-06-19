@@ -22,9 +22,11 @@ Before jumping into GMMs let's define general Mixture Models. A Mixture Model is
 
 GMMs can be used when the population we are considering is a dataset made up of continuous measurements (real numbers). We attempt to model the wider population from which the samples were drawn as a combination of Gaussian random variables. For example, imagine that we have an infinitely large room filled with males aged 10, 15 and 20. We could reasonably use a GMM to model this. We'd expect the heights of each age group to be roughly normally distributed. And so to model the entire population we would use a mixture of height distributions of each group.
 
+We _train_ the GMM using some data that we have gathered - this means determining the best model parameters to describe the data. This involves using an algorithm - generally Expectation Maximization<sup>[2](#references)</sup>.
+
 ## A bit more formally...
 
-Ok, mixture models tend to have some pretty hefty notation<sup>[[1]](#references)</sup>. I'll try to introduce things in a sensible order - but really by reading this section your accepting part of the blame.
+Ok, mixture models tend to have some pretty hefty notation<sup>[1](#references)</sup>. I'll try to introduce things in a sensible order - take solace in the fact that you _probably_ don't need to understand this section.
 
 First we have `K` - the number of Gaussians we mix in the model. And `N` be the total number of samples.
 
@@ -34,7 +36,7 @@ And the last thing we'll need is the mixture weights, which we'll denote <code c
 
 Putting this back into comprehensible language: we have `K` Gaussian random variables which represent some subcategories in our data. And we have some belief (<code class="highlighter-rouge">&phi;</code>) of how often each subcategory appears in our data.
 
-If you've kept up so far, great! Next I'm going to write about a great way to validate probabilistic models (and other more general models).
+If you've kept up so far, great! Next I'm going to write about a great way to test probabilistic models (and other more general models).
 
 ## Using simulated data to test models
 
@@ -188,10 +190,13 @@ These look like good estimates of the initial parameters! We could likely get be
 
 ## Peeking under the hood
 
-- What does the model look like?
+- We train the model using the Expectation Maximization Algorithm<sup>[2](#references)</sup>
+- How we write the EM algorithm in Rust
 
 ---
 
 ### References
 
 [1] - [Structure of a Mixture Model](https://en.wikipedia.org/wiki/Mixture_model#Structure_of_a_mixture_model). As you can see, there are a lot of parameters... In the definition above I've simplified a few things. 
+
+[2] - [The EM Algorithm](http://www.ics.uci.edu/~smyth/courses/cs274/notes/EMnotes.pdf). These were the notes I used when writing the GMM model code.
