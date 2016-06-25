@@ -38,7 +38,7 @@ h2, h3, h4, h5, h6 {
 }
 
 p {
-    font-size: 1.5em;
+    font-size: 1.7em;
     line-height: 1.4em;
     color: #e6e6e6;
 }
@@ -67,7 +67,11 @@ figcaption {
 }
 
 .post p {
-    font-size: 1em;
+    font-size: 1.2em;
+}
+
+.post li {
+    font-size: 1.1em;
 }
 
 ul.posts { 
