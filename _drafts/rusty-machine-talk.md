@@ -54,22 +54,32 @@ We'll walk through some basic concepts in machine learning that help us to under
 <p class="fragment fade-up">With data.</p>
 </section>
 
-<section data-markdown>
-## A broad overview
+<section>
+In machine learning we have <b>Supervised</b> and <b>Unsupervised</b> learning.
 
-In machine learning we have *Supervised* and *UnSupervised* learning.
+<p class="fragment fade-up" data-fragment-index="1">Supervised - We have labelled <i>input data</i></p>
+<p class="fragment fade-up" data-fragment-index="2">Unsupervised - We have unlabelled <i>input data</i></p>
 
-Supervised - We have both *input data* and *targets*
+<span style="position:relative; height: 800px;">
+    <span class="fragment fade-up" data-fragment-index="1" style="position: absolute; display: block; height: 400px; width: 800px;">
+        <span class="fragment fade-out" data-fragment-index="2">
+            <img src="{{ site.url }}/assets/cat-in-suit.jpg" style="border-radius: 20px;" >
+        </span>
+    </span>
+    <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
+        <img src="{{ site.url }}/assets/dog-headphones.jpg" style="border-radius: 20px;" >
+    </span>
+</span>
 
-UnSupervised - We have only *input data*
+<br><br><br><br><br><br><br><br>
 
-Note:
+<aside class="notes">
 Supervised example - We have pictures of cats and dogs which are labelled as such. Maybe we want to teach the machine to identify new cats and dogs from just their pictures.
 
 UnSupervised - We have just the pictures without labels. Maybe we want the machine to separate the set of photos in two groups.
 
-We also have some others. SemiSupervised, Reinforcement - we wont go into these.
-
+We also have some others. Semi-Supervised, Reinforcement - we wont go into these.
+</aside>
 </section>
 
 <!-- For some reason we must use an explicit code block somewhere for the highlighter to work with markdown... -->
@@ -109,11 +119,27 @@ Before we go any further we should see an example.
 
 The API for other models aim to be as simple as that one. However - machine learning is complicated.
 
-Rusty-machine tries to hide as much of this gunk from the average user whilst keeping it easily accessible to those who need it.
+Rusty-machine tries to hide as much of this junk from the average user whilst keeping it easily accessible to those who need it.
 
 Note:
 There are lots of different ways to train models and on top of that many ways to configure and adapt them.
 
+</section>
+
+<section data-markdown>
+## Why is Rust a good choice?
+
+- Trait system is amazing.
+- Performance focused focused code without relying on heavy dependencies*.
+- Provides insights into models.
+- (Historically we prototype in high level languages and then rewrite performance critical parts.)
+
+\* Not so performant right now, but the future looks bright!
+
+Note:
+Traits - Clean, extensible, homogenous API.
+Performance - A bold claim right now... But the potential is there for us to prototype and achieve high performance code in the same environment.
+Insights - More from a developers points of view; it is useful to have to think about how the model should be structured. What data does it need to own, which parts can be made modular without adding unneeded complexity, etc.
 </section>
 
 <section>
