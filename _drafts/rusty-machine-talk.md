@@ -82,6 +82,20 @@ We also have some others. Semi-Supervised, Reinforcement - we wont go into these
 </aside>
 </section>
 
+<section data-markdown>
+## Some more terminology
+
+- **Model** : An object that transforms _inputs_ into _outputs_ based on information in data.
+- **Train/Fit** : Teaching a model how it should transform _inputs_ using data.
+- **Predict** : Feeding _inputs_ into a model to receive _outputs_.
+
+Note:
+There is a _lot_ of terminology in ML. This is just a handful of things I'll use going forwards.
+
+We've now got a very basic idea of what machine learning is - so let's start talking about rusty-machine!
+
+</section>
+
 <!-- For some reason we must use an explicit code block somewhere for the highlighter to work with markdown... -->
 <section>
 <h2>The base of rusty-machine</h2>
@@ -115,6 +129,12 @@ Before we go any further we should see an example.
 </section>
 
 <section data-markdown>
+## Learning a numbers sign
+
+EXAMPLE HERE USING SVM?
+</section>
+
+<section data-markdown>
 ## Simple but complicated
 
 The API for other models aim to be as simple as that one. However - machine learning is complicated.
@@ -123,6 +143,67 @@ Rusty-machine tries to hide as much of this junk from the average user whilst ke
 
 Note:
 There are lots of different ways to train models and on top of that many ways to configure and adapt them.
+
+</section>
+
+<section data-markdown>
+## Using traits
+
+- A clean, simple model API
+- Extensibility at the user level
+- Reusable components within the library
+
+Note:
+As seen before, rusty-machine uses traits as its foundation.
+
+</section>
+
+<section data-markdown>
+## Extensibility
+
+We use traits to define parts of the models.
+
+Users can swap in different implementations from within rusty-machine.
+
+Users can write their own implementations and plug them in.
+
+</section>
+
+<section>
+<h2>Extensibility Example</h2>
+<h4>Support Vector Machine</h4>
+
+<pre class="fragment"><code class="hljs rust">
+pub struct SVM&lt;K: Kernel> {
+    ker: K,
+    /// Number of iterations for training.
+    pub optim_iters: usize,
+    /* ... */
+}
+</code></pre>
+
+<pre class="fragment"><code class="hljs rust">
+pub trait Kernel {
+    /// The kernel function.
+    ///
+    /// Takes two equal length slices and returns a scalar.
+    fn kernel(&amp;self, x1: &amp;[f64], x2: &amp;[f64]) -> f64;
+}
+</code></pre>
+
+</section>
+
+<section data-markdown>
+## Reusability
+
+We use traits to define common components, e.g. _Gradient Descent Solvers_.
+
+These components can be swapping in and out of models.
+
+New models can easily make use of these common components.
+
+Note:
+And of course - users can write their own versions of such components as in previous slide.
 
 </section>
 
