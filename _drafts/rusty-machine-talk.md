@@ -13,7 +13,7 @@ transition: slide
 </section>
 
 <section data-markdown>
-# This talk
+## This talk
 
 - What is rusty-machine?
 - What is machine learning?
@@ -36,6 +36,16 @@ Note:
 Installing machine learning libraries can often be made a pain if we also <b>need</b> to install, BLAS, LAPACK, CUDA, and more. Especially for new users.
 
 Try and keep things modular and reuse the API across all models. Some examples of this later.
+
+</section>
+
+<section data-markdown>
+## Another machine learning library?
+
+Note:
+- Machine learning is already in every other language, multiple times each. Are we just rewriting stuff?
+- Rusty-machine is more than deep learning.
+- Rust is a good choice: it seemed like it would be rewarding to explore.
 
 </section>
 
@@ -96,6 +106,10 @@ We've now got a very basic idea of what machine learning is - so let's start tal
 
 </section>
 
+<section data-markdown>
+## Back to rusty-machine
+
+</section>
 <!-- For some reason we must use an explicit code block somewhere for the highlighter to work with markdown... -->
 <section>
 <h2>The base of rusty-machine</h2>
@@ -134,15 +148,16 @@ Before we go any further we should see an example.
 EXAMPLE HERE USING SVM?
 </section>
 
-<section data-markdown>
-## Simple but complicated
+<section>
+<h2>Simple but complicated</h2>
 
-The API for other models aim to be as simple as that one. However - machine learning is complicated.
+<p>The API for other models aim to be as simple as that one. However... <div class="fragment">Machine learning is complicated.</div></p>
 
-Rusty-machine tries to hide as much of this junk from the average user whilst keeping it easily accessible to those who need it.
+<p class="fragment">Rusty-machine aims to be as simple as possible.</p>
 
-Note:
+<aside class="notes">
 There are lots of different ways to train models and on top of that many ways to configure and adapt them.
+</aside>
 
 </section>
 
@@ -155,6 +170,8 @@ There are lots of different ways to train models and on top of that many ways to
 
 Note:
 As seen before, rusty-machine uses traits as its foundation.
+
+In Rust a trait defines an interface - a set of functions which the implementor should define.
 
 </section>
 
@@ -169,6 +186,7 @@ Users can write their own implementations and plug them in.
 
 </section>
 
+<section>
 <section>
 <h2>Extensibility Example</h2>
 <h4>Support Vector Machine</h4>
@@ -190,7 +208,36 @@ pub trait Kernel {
     fn kernel(&amp;self, x1: &amp;[f64], x2: &amp;[f64]) -> f64;
 }
 </code></pre>
+</section>
 
+<section>
+<h2>Combining kernels</h2>
+
+(K<sub>1</sub> + K<sub>2</sub>)(x<sub>1</sub>, x<sub>2</sub>) = K<sub>1</sub>(x<sub>1</sub>, x<sub>2</sub>) + K<sub>2</sub>(x<sub>1</sub>, x<sub>2</sub>)
+
+<pre class="fragment"><code class="hljs rust">
+pub struct KernelSum&lt;T, U>
+    where T: Kernel,
+          U: Kernel
+{
+    k1: T,
+    k2: U,
+}
+</code></pre>
+
+<pre class="fragment"><code class="hljs rust">
+/// Computes the sum of the two associated kernels.
+impl&lt;T, U> Kernel for KernelSum&lt;T, U>
+    where T: Kernel,
+          U: Kernel
+{
+    fn kernel(&amp;self, x1: &amp;[f64], x2: &amp;[f64]) -> f64 {
+        self.k1.kernel(x1, x2) + self.k2.kernel(x1, x2)
+    }
+}
+</code></pre>
+
+</section>
 </section>
 
 <section data-markdown>
@@ -198,7 +245,7 @@ pub trait Kernel {
 
 We use traits to define common components, e.g. _Gradient Descent Solvers_.
 
-These components can be swapping in and out of models.
+These components can be swapped in and out of models.
 
 New models can easily make use of these common components.
 
@@ -208,9 +255,39 @@ And of course - users can write their own versions of such components as in prev
 </section>
 
 <section data-markdown>
+## Reusability Example
+
+All _Gradient Descent Solvers_ implement this trait.
+
+```
+/// Trait for optimization algorithms. (Some things omitted)
+pub trait OptimAlgorithm {
+    /// Return the optimized parameter using gradient optimization.
+    fn optimize(...) -> Vec&lt;f64>;
+}
+```
+
+This means they can be reused across multiple models.
+
+</section>
+
+<section data-markdown>
+## Error Handling
+
+Though I've not made good use of it - Rust's error handling is fantastic.
+
+```rust
+pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
+    // Fun stuff goes here
+}
+```
+</section>
+
+<section data-markdown>
 ## Why is Rust a good choice?
 
 - Trait system is amazing.
+- Error handling is amazing.
 - Performance focused focused code without relying on heavy dependencies*.
 - Provides insights into models.
 - (Historically we prototype in high level languages and then rewrite performance critical parts.)
@@ -234,6 +311,14 @@ Insights - More from a developers points of view; it is useful to have to think 
 </section>
 
 <section data-markdown>
+## What would I like to see from Rust?
+
+- Specialization
+- Growth of Float/Complex generics
+
+</section>
+
+<section data-markdown>
 ## Thanks!
 
 #### Some Links
@@ -242,3 +327,27 @@ Insights - More from a developers points of view; it is useful to have to think 
 - [My Blog](http://athemathmo.github.io/)
 
 </section>
+
+<section>
+
+<section data-markdown>
+## Some FAQs
+
+</section>
+
+<section>
+<h2>Why no GPU support</h2>
+
+<img src="{{ site.url }}/assets/why-no-gpu.png" style="border-radius: 20px;" >
+
+<p>From Scikit-learn's FAQs.</p>
+
+<aside class="notes">
+I do think it is worth having, but the concerns expressed in this
+excerpt from Scikit learn are valid.
+</aside>
+</section>
+
+</section>
+
+
