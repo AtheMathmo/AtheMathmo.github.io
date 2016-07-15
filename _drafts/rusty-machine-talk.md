@@ -143,9 +143,37 @@ Before we go any further we should see an example.
 </section>
 
 <section data-markdown>
-## Learning a numbers sign
+## K-Means
 
-EXAMPLE HERE USING SVM?
+A model for _clustering_.
+
+_Image to be included._
+
+</section>
+
+<section data-markdown>
+
+## Using a K-Means Model
+
+```
+// ... Generate some samples
+
+// Create a new model with 2 clusters
+let mut model = KMeansClassifier::new(2);
+
+// Train the model
+model.train(&samples);
+
+let centroids = model.centroids().as_ref().unwrap();
+println!("Model Centroids:\n{:.3}", centroids);
+
+// Predict the classes and partition into
+println!("Classifying the samples...");
+let classes = model.predict(&samples);
+```
+
+_You can run the full example in the [rusty-machine repo](https://github.com/AtheMathmo/rusty-machine/tree/master/examples)._
+
 </section>
 
 <section>
@@ -284,6 +312,28 @@ pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
 </section>
 
 <section data-markdown>
+
+## Linear Algebra - [Rulinalg](https://github.com/AtheMathmo/rulinalg)
+
+Rusty-machine works without any external dependencies.
+
+Rulinalg provides linear algebra implemented entirely in Rust.
+
+</section>
+
+<section data-markdown>
+
+## What does Rulinalg do?
+
+- Data structures (`Matrix`, `Vector`)
+- Basic operators (with in-place allocation where possible)
+- Decompositions (Inverse, Eigendecomp, SVD, etc.)
+- And more...
+
+
+</section>
+
+<section data-markdown>
 ## Why is Rust a good choice?
 
 - Trait system is amazing.
@@ -346,6 +396,24 @@ Insights - More from a developers points of view; it is useful to have to think 
 I do think it is worth having, but the concerns expressed in this
 excerpt from Scikit learn are valid.
 </aside>
+</section>
+
+<section data-markdown>
+
+## BLAS/LAPACK
+
+Hopefully soon!
+
+</section>
+
+<section data-markdown>
+
+## Integrating with other languages
+
+Nothing planned yet, but some good choices.
+
+Python is especially exciting.
+
 </section>
 
 </section>

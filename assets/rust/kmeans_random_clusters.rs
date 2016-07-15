@@ -49,7 +49,7 @@ fn main() {
     println!("{}", centroids);
 
     // Generate some data randomly around the centroids
-    let samples = generate_data(&centroids, SAMPLES_PER_CENTROID, 0.4);
+    let samples = generate_data(&centroids, SAMPLES_PER_CENTROID, 0.5);
 
     // Create a new model with 2 clusters
     let mut model = KMeansClassifier::new(2);
