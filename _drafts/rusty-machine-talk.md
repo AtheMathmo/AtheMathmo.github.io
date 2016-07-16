@@ -142,12 +142,12 @@ SupModel trait is for the supervised learning algorithms. UnSupModel trait for u
 Before we go any further we should see an example.
 </section>
 
-<section data-markdown>
-## K-Means
+<section>
+<h2>K-Means</h2>
 
-A model for _clustering_.
+<p>A model for <i>clustering</i>.</p>
 
-_Image to be included._
+<img src="{{ site.url }}/assets/k_means_samples_with_original.jpg" style="border-radius: 20px; height:400px; width: 600px;">
 
 </section>
 
@@ -156,7 +156,7 @@ _Image to be included._
 ## Using a K-Means Model
 
 ```
-// ... Generate some samples
+// ... Get the data samples
 
 // Create a new model with 2 clusters
 let mut model = KMeansClassifier::new(2);
@@ -164,8 +164,8 @@ let mut model = KMeansClassifier::new(2);
 // Train the model
 model.train(&samples);
 
-let centroids = model.centroids().as_ref().unwrap();
-println!("Model Centroids:\n{:.3}", centroids);
+// Get the model centroids
+let centroids : Matrix&lt;T> = model.centroids().as_ref().unwrap();
 
 // Predict the classes and partition into
 println!("Classifying the samples...");
@@ -177,11 +177,19 @@ _You can run the full example in the [rusty-machine repo](https://github.com/Ath
 </section>
 
 <section>
+
+<h2>K-Means Classification</h2>
+
+<img src="{{ site.url }}/assets/k_means_samples_with_model.jpg" style="border-radius: 20px; height:400px; width: 600px;">
+
+</section>
+
+<section>
 <h2>Simple but complicated</h2>
 
 <p>The API for other models aim to be as simple as that one. However... <div class="fragment">Machine learning is complicated.</div></p>
 
-<p class="fragment">Rusty-machine aims to be as simple as possible.</p>
+<p class="fragment">Rusty-machine aims for ease of use.</p>
 
 <aside class="notes">
 There are lots of different ways to train models and on top of that many ways to configure and adapt them.
@@ -289,9 +297,9 @@ All _Gradient Descent Solvers_ implement this trait.
 
 ```
 /// Trait for optimization algorithms. (Some things omitted)
-pub trait OptimAlgorithm {
+pub trait OptimAlgorithm&lt;M> {
     /// Return the optimized parameter using gradient optimization.
-    fn optimize(...) -> Vec&lt;f64>;
+    fn optimize(&amp;self, model: &amp;M, ...) -> Vec&lt;f64>;
 }
 ```
 
@@ -305,10 +313,29 @@ This means they can be reused across multiple models.
 Though I've not made good use of it - Rust's error handling is fantastic.
 
 ```rust
-pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
-    // Fun stuff goes here
+impl Matrix&lt;T> {
+    pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
+        // Fun stuff goes here
+    }
 }
+
 ```
+</section>
+
+<section data-markdown>
+
+## What can rusty-machine do?
+
+- K-Means Clustering
+- Linear Regression
+- Logistic Regression
+- Generalized Linear Models
+- Neural Networks
+- Gaussian Process Regression
+- Support Vector Machines
+- Gaussian Mixture Models
+- Naive Bayes Classifiers
+
 </section>
 
 <section data-markdown>
