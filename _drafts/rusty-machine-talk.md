@@ -15,28 +15,30 @@ transition: slide
 <section data-markdown>
 ## This talk
 
-- What is rusty-machine?
 - What is machine learning?
+- How does rusty-machine work?
 - Why is rusty-machine great?
 
 </section>
 
-<section data-markdown>
-## What is rusty-machine?
+<section>
+<h2>What is rusty-machine?</h2>
 
-[Rusty-machine](https://github.com/AtheMathmo/rusty-machine) is a machine learning library written entirely in Rust.
+<p><a href="https://github.com/AtheMathmo/rusty-machine">Rusty-machine</a> is a machine learning library written entirely in Rust.</p>
 
-It focuses on the following:
+<p class="fragment" data-fragment-index="1">It focuses on the following:</p>
 
-- Works out-of-the-box without relying on external dependencies.
-- Simple and easy to understand API.
-- Extendible and easy to configure.
+<ul class="fragment" data-fragment-index="1">
+    <li>Works out-of-the-box without relying on external dependencies.</li>
+    <li>Simple and easy to understand API.</li>
+    <li>Extendible and easy to configure.</li>
+</ul>
 
-Note:
+<aside class="notes">
 Installing machine learning libraries can often be made a pain if we also <b>need</b> to install, BLAS, LAPACK, CUDA, and more. Especially for new users.
 
 Try and keep things modular and reuse the API across all models. Some examples of this later.
-
+</aside>
 </section>
 
 <section data-markdown>
@@ -65,18 +67,32 @@ We'll walk through some basic concepts in machine learning that help us to under
 </section>
 
 <section>
+<h2>Some examples</h2>
+
+<ul>
+    <li class="fragment down" data-fragment-index="1">Predicting whether an image contains a cat or a dog</li>
+    <li class="fragment down" data-fragment-index="3">Predicting house prices given related data</li>
+    <li class="fragment down" data-fragment-index="5">Separating two sources of audio from a single track</li>
+</ul>
+
+<br><br><br><br><br><br><br><br>
+</section>
+
+<!-- Skipping the slides about learning types..
+<section>
+
 In machine learning we have <b>Supervised</b> and <b>Unsupervised</b> learning.
 
 <p class="fragment fade-up" data-fragment-index="1">Supervised - We have labelled <i>input data</i></p>
-<p class="fragment fade-up" data-fragment-index="2">Unsupervised - We have unlabelled <i>input data</i></p>
+<p class="fragment fade-up" data-fragment-index="3">Unsupervised - We have unlabelled <i>input data</i></p>
 
 <span style="position:relative; height: 800px;">
-    <span class="fragment fade-up" data-fragment-index="1" style="position: absolute; display: block; height: 400px; width: 800px;">
-        <span class="fragment fade-out" data-fragment-index="2">
+    <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
+        <span class="fragment fade-out" data-fragment-index="3">
             <img src="{{ site.url }}/assets/cat-in-suit.jpg" style="border-radius: 20px;" >
         </span>
     </span>
-    <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
+    <span class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
         <img src="{{ site.url }}/assets/dog-headphones.jpg" style="border-radius: 20px;" >
     </span>
 </span>
@@ -86,45 +102,48 @@ In machine learning we have <b>Supervised</b> and <b>Unsupervised</b> learning.
 <aside class="notes">
 Supervised example - We have pictures of cats and dogs which are labelled as such. Maybe we want to teach the machine to identify new cats and dogs from just their pictures.
 
-UnSupervised - We have just the pictures without labels. Maybe we want the machine to separate the set of photos in two groups.
+UnSupervised example - We have just the pictures without labels. Maybe we want the machine to separate the set of photos in two groups.
 
 We also have some others. Semi-Supervised, Reinforcement - we wont go into these.
 </aside>
 </section>
+ -->
 
-<section data-markdown>
-## Some more terminology
+<section>
+<h2>Some terminology</h2>
 
-- **Model** : An object that transforms _inputs_ into _outputs_ based on information in data.
-- **Train/Fit** : Teaching a model how it should transform _inputs_ using data.
-- **Predict** : Feeding _inputs_ into a model to receive _outputs_.
+<ul>
+<li><b>Model</b> : An object that transforms <i>inputs</i> into <i>outputs</i> based on information in data.</li>
+<li><b>Train/Fit</b> : Teaching a model how it should transform <i>inputs</i> using data.</li>
+<li><b>Predict</b> : Feeding <i>inputs</i> into a model to receive <i>outputs</i>.</li>
+</ul>
+<br><br>
+<p class="fragment">To predict house prices we may use a <i>Linear Regression</i> <b>Model</b>. We'd <b>train</b> the model on some house prices and facts about the houses. Then we'd <b>predict</b> the price of houses we do not yet know.</p>
 
-Note:
+<aside class="notes">
 There is a _lot_ of terminology in ML. This is just a handful of things I'll use going forwards.
 
+In the example I've used the terminology to illustrate a little more clearly what each means.
+
 We've now got a very basic idea of what machine learning is - so let's start talking about rusty-machine!
+</aside>
 
 </section>
 
+
 <section data-markdown>
+
 ## Back to rusty-machine
 
 </section>
+
 <!-- For some reason we must use an explicit code block somewhere for the highlighter to work with markdown... -->
 <section>
 <h2>The base of rusty-machine</h2>
 <pre><code class="hljs rust">
 pub mod learning {
-    /// For supervised learning
-    pub trait SupModel<T, U> {
+    pub trait Model<T, U> {
         fn train(&mut self, inputs: &T, targets: &U);
-
-        fn predict(&self, inputs: &T) -> U;
-    }
-
-    /// For unsupervised learning
-    pub trait UnSupModel {
-        fn train(&mut self, inputs: &T);
 
         fn predict(&self, inputs: &T) -> U;
     }
@@ -132,7 +151,9 @@ pub mod learning {
 </code></pre>
 
 <aside class="notes">
-SupModel trait is for the supervised learning algorithms. UnSupModel trait for unsupervised learning algorithnms.
+This trait is used to represent a model.
+
+It is simplified a little from the actual traits used.
 </aside>
 </section>
 
@@ -147,12 +168,13 @@ Before we go any further we should see an example.
 
 <p>A model for <i>clustering</i>.</p>
 
-<img src="{{ site.url }}/assets/k_means_samples_with_original.jpg" style="border-radius: 20px; height:400px; width: 600px;">
+<img src="{{ site.url }}/assets/k_means_samples.jpg" class="stretch" style="border-radius: 20px;">
 
 </section>
 
-<section data-markdown>
+<section>
 
+<section data-markdown>
 ## Using a K-Means Model
 
 ```
@@ -164,10 +186,10 @@ let mut model = KMeansClassifier::new(2);
 // Train the model
 model.train(&samples);
 
-// Get the model centroids
+// Get the model centroids (the center of each cluster)
 let centroids : Matrix&lt;T> = model.centroids().as_ref().unwrap();
 
-// Predict the classes and partition into
+// Predict which cluster each point belongs to
 println!("Classifying the samples...");
 let classes = model.predict(&samples);
 ```
@@ -176,11 +198,24 @@ _You can run the full example in the [rusty-machine repo](https://github.com/Ath
 
 </section>
 
+<section data-markdown>
+## Under the hood
+
+K-Means works in roughly the following way:
+
+1. Get some initial guesses for the centroids (cluster centers)
+2. Assign each point to the centroid it is closest to.
+3. Update the centroids by taking the average of all points assigned to it.
+4. Repeat 2 and 3 until convergence.
+
+</section>
+</section>
+
 <section>
 
 <h2>K-Means Classification</h2>
 
-<img src="{{ site.url }}/assets/k_means_samples_with_model.jpg" style="border-radius: 20px; height:400px; width: 600px;">
+<img src="{{ site.url }}/assets/k_means_samples_with_model.jpg" class="stretch" style="border-radius: 20px;">
 
 </section>
 
@@ -365,8 +400,7 @@ Rulinalg provides linear algebra implemented entirely in Rust.
 
 - Trait system is amazing.
 - Error handling is amazing.
-- Performance focused focused code without relying on heavy dependencies*.
-- Provides insights into models.
+- Performance focused code without relying on heavy dependencies*.
 - (Historically we prototype in high level languages and then rewrite performance critical parts.)
 
 \* Not so performant right now, but the future looks bright!
@@ -377,11 +411,35 @@ Performance - A bold claim right now... But the potential is there for us to pro
 Insights - More from a developers points of view; it is useful to have to think about how the model should be structured. What data does it need to own, which parts can be made modular without adding unneeded complexity, etc.
 </section>
 
+<section data-markdown>
+## Why is Rust a good choice?
+
+Most importantly for me - we gain more control over data.
+
+Note:
+We choose when a model needs ownership. When to allocate new memory for operations. These are things
+that are much harder to achieve in other languages as pleasant-to-use as Rust.
+
+</section>
+
+<section data-markdown>
+## When would you use rusty-machine?
+
+At the moment - experimentation, non-performance critical applications.
+
+In the future - quick, extensible modeling.
+
+Note:
+For now it would be unwise to use this for anything serious. Except maybe if the benefits of Rust outweigh performance and accuracy.
+
+In the future, rusty-machine will try to enable rapid prototyping that can be easily extended into a finished product.
+
+</section>
+
 <section>
 <h2>What's next?</h2>
 <ul>
 <li class="fragment fade-up">Optimizing and stablizing existing models.</li>
-<li class="fragment fade-up">Pulling linear algebra into a new crate.</li>
 <li class="fragment fade-up">Providing optional use of BLAS/LAPACK/CUDA/etc.</li>
 </ul>
 
@@ -392,6 +450,15 @@ Insights - More from a developers points of view; it is useful to have to think 
 
 - Specialization
 - Growth of Float/Complex generics
+
+</section>
+
+<section data-markdown>
+## Summary
+
+- Machine learning (done quickly)
+- Rusty-machine
+- Rulinalg
 
 </section>
 

@@ -7,15 +7,15 @@ import numpy as np
 # [   0  0.5]
 # Training the model...
 # Model Centroids:
-# [-0.390 -0.253]
-# [-0.057  0.167]
+# [-0.645 -0.514]
+# [-0.153  0.630]
 # Classifying the samples...
 # Samples closest to first centroid: 1984
 # Samples closest to second centroid: 2016
 
 # These are the values used to generate the data.
 ORIGINAL_CENTROIDS = np.array([[-0.5, -0.5], [0, 0.5]])
-MODEL_CENTROIDS = np.array([[-0.390, -0.253],[-0.057, 0.167]])
+MODEL_CENTROIDS = np.array([[-0.645, -0.514],[-0.153, 0.630]])
 
 def read_samples_in(input_file):
 	return np.loadtxt(input_file, delimiter=',')
