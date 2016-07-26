@@ -70,10 +70,27 @@ We'll walk through some basic concepts in machine learning that help us to under
 <h2>Some examples</h2>
 
 <ul>
-    <li class="fragment down" data-fragment-index="1">Predicting whether an image contains a cat or a dog</li>
-    <li class="fragment down" data-fragment-index="3">Predicting house prices given related data</li>
-    <li class="fragment down" data-fragment-index="5">Separating two sources of audio from a single track</li>
+    <li class="fragment fade-down" data-fragment-index="1">Predicting whether an image contains a cat or a dog</li>
+    <li class="fragment fade-down" data-fragment-index="3">Predicting house prices</li>
+    <li class="fragment fade-down" data-fragment-index="4">Understanding hand written digits</li>
 </ul>
+
+<br><br>
+
+<span style="position:relative; height: 800px;">
+    <h4 class="fragment fade-up" data-fragment-index="2">Data set might be:</h4>
+    <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
+            <p class="fragment fade-out" data-fragment-index="3"><i>labelled</i> pictures of cats and dogs.</p>
+    </span>
+    <span class="fragment fade-up" data-fragment-index="3" style="position: absolute; display: block; height: 400px; width: 800px;">
+        <p class="fragment fade-out" data-fragment-index="4">
+            house prices and other facts about the houses.
+        </p>
+    </span>
+    <p class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
+        many examples of hand written digits.
+    </p>
+</span>
 
 <br><br><br><br><br><br><br><br>
 </section>
@@ -347,7 +364,7 @@ We can override the `Add` trait to allow complex combinations of kernels.
 <section>
 <h2>Reusability</h2>
 
-<p>We use traits to define common components, e.g. <i>Gradient Descent Solvers</i> or even <i>Kernels</i>.</p>
+<p>We use traits to define common components, e.g. <i>Kernels</i> or <i>Gradient Descent Solvers</i>.</p>
 
 <p class="fragment" data-fragment-index="1">These components can be swapped in and out of models.</p>
 
@@ -535,6 +552,19 @@ In the future, rusty-machine will try to enable rapid prototyping that can be ea
 - Machine learning (done quickly)
 - Rusty-machine
 - Rulinalg
+
+</section>
+
+<section data-markdown>
+
+## Contributors
+
+|||
+ --- | --- | --- 
+[zackmdavis](https://github.com/zackmdavis) | [DarkDrek](https://github.com/DarkDrek) | [tafia](https://github.com/tafia)
+[ic](https://github.com/ic) | [rrichardson](https://github.com/rrichardson) | [vishalsodani](https://github.com/vishalsodani)
+[raulsi](https://github.com/raulsi) | [danlrobertson](https://github.com/danlrobertson) | [brendan-rius](https://github.com/brendan-rius)
+ | [andrewcsmith](https://github.com/andrewcsmith) | |
 
 </section>
 

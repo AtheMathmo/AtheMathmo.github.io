@@ -9,3 +9,9 @@ code {
 	font-size: 1.2em !important;
 	line-height: 1.2em !important;
 }
+
+table {
+	font-size: 1.0em  !important;
+	text-align: center !important;
+	line-height: 1.3em !important;
+}
