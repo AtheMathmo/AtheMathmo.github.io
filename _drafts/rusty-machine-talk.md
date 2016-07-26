@@ -139,14 +139,12 @@ We've now got a very basic idea of what machine learning is - so let's start tal
 
 <!-- For some reason we must use an explicit code block somewhere for the highlighter to work with markdown... -->
 <section>
-<h2>The base of rusty-machine</h2>
+<h2>The foundation of rusty-machine</h2>
 <pre><code class="hljs rust">
-pub mod learning {
-    pub trait Model<T, U> {
-        fn train(&mut self, inputs: &T, targets: &U);
+pub trait Model<T, U> {
+    fn train(&mut self, inputs: &T, targets: &U);
 
-        fn predict(&self, inputs: &T) -> U;
-    }
+    fn predict(&self, inputs: &T) -> U;
 }
 </code></pre>
 
@@ -161,6 +159,9 @@ It is simplified a little from the actual traits used.
 ## An example
 
 Before we go any further we should see an example.
+
+Note:
+The example will show how we use these functions from the Model trait.
 </section>
 
 <section>
@@ -169,6 +170,10 @@ Before we go any further we should see an example.
 <p>A model for <i>clustering</i>.</p>
 
 <img src="{{ site.url }}/assets/k_means_samples.jpg" class="stretch" style="border-radius: 20px;">
+
+<aside class="notes">
+Clustering is essentially grouping together similar items. Where <i>similar</i> may mean close together in space, or share similar features, etc.
+</aside>
 
 </section>
 
@@ -251,9 +256,7 @@ In Rust a trait defines an interface - a set of functions which the implementor 
 
 We use traits to define parts of the models.
 
-Users can swap in different implementations from within rusty-machine.
-
-Users can write their own implementations and plug them in.
+While rusty-machine provides common defaults - users can write their own implementations and plug them in.
 
 </section>
 
@@ -263,10 +266,10 @@ Users can write their own implementations and plug them in.
 <h4>Support Vector Machine</h4>
 
 <pre class="fragment"><code class="hljs rust">
+/// A Support Vector Machine
 pub struct SVM&lt;K: Kernel> {
     ker: K,
-    /// Number of iterations for training.
-    pub optim_iters: usize,
+    /// Some other fields
     /* ... */
 }
 </code></pre>
@@ -279,12 +282,20 @@ pub trait Kernel {
     fn kernel(&amp;self, x1: &amp;[f64], x2: &amp;[f64]) -> f64;
 }
 </code></pre>
+
+<aside class="notes">
+An SVM is a model which is generally used for classification. The behaviour of the SVM is governed by a <i>kernel</i>.
+
+Here we allow the kernel to be generic while providing some sensible defaults.
+
+This is accessible in other languages but Rust helps us enforce this with the compiler.
+</aside>
 </section>
 
 <section>
 <h2>Combining kernels</h2>
 
-(K<sub>1</sub> + K<sub>2</sub>)(x<sub>1</sub>, x<sub>2</sub>) = K<sub>1</sub>(x<sub>1</sub>, x<sub>2</sub>) + K<sub>2</sub>(x<sub>1</sub>, x<sub>2</sub>)
+K<sub>1</sub>(x<sub>1</sub>, x<sub>2</sub>) + K<sub>2</sub>(x<sub>1</sub>, x<sub>2</sub>) = K(x<sub>1</sub>, x<sub>2</sub>)
 
 <pre class="fragment"><code class="hljs rust">
 pub struct KernelSum&lt;T, U>
@@ -308,20 +319,47 @@ impl&lt;T, U> Kernel for KernelSum&lt;T, U>
 }
 </code></pre>
 
+<aside class="notes">
+We can override the `Add` trait to allow complex combinations of kernels.
+</aside>
+</section>
+
+<section>
+<h2>Combining kernels</h2>
+
+K<sub>1</sub>(x<sub>1</sub>, x<sub>2</sub>) + K<sub>2</sub>(x<sub>1</sub>, x<sub>2</sub>) = K(x<sub>1</sub>, x<sub>2</sub>)
+
+<pre><code class="hljs rust">
+let poly_ker = kernel::Polynomial::new(...);
+let hypert_ker = kernel::HyperTan::new(...);
+
+let sum_kernel = poly_ker + hypert_ker;
+
+let mut model = SVM::new(sum_kernel);
+</code></pre>
+
+<aside class="notes">
+We can override the `Add` trait to allow complex combinations of kernels.
+</aside>
 </section>
 </section>
 
-<section data-markdown>
-## Reusability
+<section>
+<h2>Reusability</h2>
 
-We use traits to define common components, e.g. _Gradient Descent Solvers_.
+<p>We use traits to define common components, e.g. <i>Gradient Descent Solvers</i> or even <i>Kernels</i>.</p>
 
-These components can be swapped in and out of models.
+<p class="fragment" data-fragment-index="1">These components can be swapped in and out of models.</p>
 
-New models can easily make use of these common components.
+<p class="fragment" data-fragment-index="1">New models can easily make use of these common components.</p>
 
-Note:
-And of course - users can write their own versions of such components as in previous slide.
+<aside class="notes">
+Similar to Extensibility - but by this I mean we can move common components across different models.
+Of course this is possible with other languages and frameworks but Rust helps us do this while enforcing
+the requirements with the compiler.
+
+For example - in other languages how can we be sure that the kernel function won't consume the input data?
+</aside>
 
 </section>
 
@@ -331,30 +369,31 @@ And of course - users can write their own versions of such components as in prev
 All _Gradient Descent Solvers_ implement this trait.
 
 ```
-/// Trait for optimization algorithms. (Some things omitted)
-pub trait OptimAlgorithm&lt;M> {
+/// Trait for gradient descent algorithms. (Some things omitted)
+pub trait OptimAlgorithm&lt;M: Optimizable> {
     /// Return the optimized parameter using gradient optimization.
     fn optimize(&amp;self, model: &amp;M, ...) -> Vec&lt;f64>;
 }
 ```
 
-This means they can be reused across multiple models.
+The **Optimizable** trait is implemented by a model which is differentiable.
 
 </section>
 
-<section data-markdown>
-## Error Handling
+<section>
+<h2>Creating a new model</h2>
+<h3>With gradient descent optimization</h3>
 
-Though I've not made good use of it - Rust's error handling is fantastic.
+<ol>
+    <li class="fragment">Create the model struct.</li>
+    <li class="fragment">Implement <b>Optimizable</b> for model.</li>
+    <li class="fragment">In the <b>train</b> function use an <b>OptimAlgorithm</b> to compute the optimized parameters.</li>
+</ol>
 
-```rust
-impl Matrix&lt;T> {
-    pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
-        // Fun stuff goes here
-    }
-}
+<aside class="notes">
+The bulk of the work will be in step 2 - which is where we compute the gradient of the model.
+</aside>
 
-```
 </section>
 
 <section data-markdown>
@@ -383,6 +422,39 @@ Rulinalg provides linear algebra implemented entirely in Rust.
 
 </section>
 
+<section>
+
+<h2>Why Rulinalg?</h2>
+
+<p class="fragment">Ease of use</p>
+
+<aside class="notes">
+Some history behind why this exists - when I started development it was unclear whether any other options would be a good fit.
+
+And of course Rust is a great choice for implementing linear algebra.
+</aside>
+</section>
+
+<section data-markdown>
+## A quick note on error handling
+
+Rust's error handling is fantastic.
+
+```rust
+impl Matrix&lt;T> {
+    pub fn inverse(&amp;self) -> Result&lt;Matrix&lt;T>, Error> {
+        // Fun stuff goes here
+    }
+}
+```
+
+Note:
+Using Results to communicate that a method may fail provides more freedom whilst being more explicit.
+
+I could certainly use the error handling more frequently - especially within rusty-machine (rulinalg is pretty good).
+
+</section>
+
 <section data-markdown>
 
 ## What does Rulinalg do?
@@ -392,29 +464,32 @@ Rulinalg provides linear algebra implemented entirely in Rust.
 - Decompositions (Inverse, Eigendecomp, SVD, etc.)
 - And more...
 
-
 </section>
 
-<section data-markdown>
-## Why is Rust a good choice?
+<section>
+<h2>Why is Rust a good choice?</h2>
 
-- Trait system is amazing.
-- Error handling is amazing.
-- Performance focused code without relying on heavy dependencies*.
-- (Historically we prototype in high level languages and then rewrite performance critical parts.)
+<ul>
+<li>Trait system is amazing.</li>
+<li>Error handling is amazing.</li>
+<li>Performance focused code without relying on heavy dependencies*.</li>
+</ul>
 
-\* Not so performant right now, but the future looks bright!
+<p class="fragment">* Rusty-machine needs some work, but the future looks bright!</p>
 
-Note:
+<aside class="notes">
+Historically we prototype in high level languages and then rewrite performance critical parts.
+
 Traits - Clean, extensible, homogenous API.
 Performance - A bold claim right now... But the potential is there for us to prototype and achieve high performance code in the same environment.
 Insights - More from a developers points of view; it is useful to have to think about how the model should be structured. What data does it need to own, which parts can be made modular without adding unneeded complexity, etc.
+</aside>
 </section>
 
 <section data-markdown>
 ## Why is Rust a good choice?
 
-Most importantly for me - we gain more control over data.
+Most importantly for me - safe control over memory.
 
 Note:
 We choose when a model needs ownership. When to allocate new memory for operations. These are things
@@ -441,6 +516,7 @@ In the future, rusty-machine will try to enable rapid prototyping that can be ea
 <ul>
 <li class="fragment fade-up">Optimizing and stablizing existing models.</li>
 <li class="fragment fade-up">Providing optional use of BLAS/LAPACK/CUDA/etc.</li>
+<li class="fragment fade-up">Addressing lack of tooling.</li>
 </ul>
 
 </section>
@@ -506,7 +582,7 @@ Hopefully soon!
 
 Nothing planned yet, but some good choices.
 
-Python is especially exciting.
+Python is especially exciting as we gain access to lots of tooling.
 
 </section>
 
