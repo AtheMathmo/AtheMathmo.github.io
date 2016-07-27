@@ -1,7 +1,7 @@
 ---
 layout: slide
 title: Rusty-machine talk from SF Meetup
-excerpt: Talking about Rust and machine learning with rusty-machine
+excerpt: Talking about Rust and machine learning with rusty-machine. (Press 's' for notes).
 theme: night
 transition: slide
 ---
@@ -10,6 +10,10 @@ transition: slide
 # Rusty-machine
 
 ## James Lucas
+
+Note:
+Disclaimer: I'm a mathematician by training so things may get heavy.
+I'll do my best to explain but please interrupt me if I'm not making sense.
 </section>
 
 <section data-markdown>
@@ -24,7 +28,7 @@ transition: slide
 <section>
 <h2>What is rusty-machine?</h2>
 
-<p><a href="https://github.com/AtheMathmo/rusty-machine">Rusty-machine</a> is a machine learning library written entirely in Rust.</p>
+<p><a href="https://github.com/AtheMathmo/rusty-machine">Rusty-machine</a> is a machine learning library written <b>entirely</b> in Rust.</p>
 
 <p class="fragment" data-fragment-index="1">It focuses on the following:</p>
 
@@ -71,8 +75,8 @@ We'll walk through some basic concepts in machine learning that help us to under
 
 <ul>
     <li class="fragment fade-down" data-fragment-index="1">Predicting whether an image contains a cat or a dog</li>
-    <li class="fragment fade-down" data-fragment-index="3">Predicting house prices</li>
-    <li class="fragment fade-down" data-fragment-index="4">Understanding hand written digits</li>
+    <li class="fragment fade-down" data-fragment-index="3">Predicting rent increase</li>
+    <li class="fragment fade-down" data-fragment-index="5">Understanding hand written digits</li>
 </ul>
 
 <br><br>
@@ -82,17 +86,27 @@ We'll walk through some basic concepts in machine learning that help us to under
     <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
             <p class="fragment fade-out" data-fragment-index="3"><i>labelled</i> pictures of cats and dogs.</p>
     </span>
-    <span class="fragment fade-up" data-fragment-index="3" style="position: absolute; display: block; height: 400px; width: 800px;">
-        <p class="fragment fade-out" data-fragment-index="4">
-            house prices and other facts about the houses.
+    <span class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
+        <p class="fragment fade-out" data-fragment-index="5">
+            rent prices and other facts about the houses.
         </p>
     </span>
-    <p class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
+    <p class="fragment fade-up" data-fragment-index="6" style="position: absolute; display: block; height: 400px; width: 800px;">
         many examples of hand written digits.
     </p>
 </span>
 
-<br><br><br><br><br><br><br><br>
+<br><br>
+
+<aside class="notes">
+Define the problem first - then the data - then how machine learning could solve it.
+
+For the second problem - imagine you want to predict what your rent will be when you renew your lease.
+You have data from craigs list of the rent listings in your neighbourhood. And data from some ordinance
+service with facts like, windows on each apartment, # chimneys, sq footage, etc. You want to use this data
+to predict what your rent will be.
+</aside>
+
 </section>
 
 <!-- Skipping the slides about learning types..
@@ -135,7 +149,8 @@ We also have some others. Semi-Supervised, Reinforcement - we wont go into these
 <li><b>Predict</b> : Feeding <i>inputs</i> into a model to receive <i>outputs</i>.</li>
 </ul>
 <br><br>
-<p class="fragment">To predict house prices we may use a <i>Linear Regression</i> <b>Model</b>. We'd <b>train</b> the model on some house prices and facts about the houses. Then we'd <b>predict</b> the price of houses we do not yet know.</p>
+<p class="fragment">To predict rent increases we may use a <i>Linear Regression</i> <b>Model</b>. We'd <b>train</b>
+the model on some rent prices and facts about the residence. Then we'd <b>predict</b> the rent of unlisted places.</p>
 
 <aside class="notes">
 There is a _lot_ of terminology in ML. This is just a handful of things I'll use going forwards.
@@ -147,6 +162,20 @@ We've now got a very basic idea of what machine learning is - so let's start tal
 
 </section>
 
+<section>
+<h2>Why is machine learning hard?</h2>
+
+<p class="fragment">There are many, many models to choose from.</p>
+
+<p class="fragment">There are many, many ways to use each model.</p>
+
+<aside class="notes">
+Machine learning is inherently difficult - those described here certainly aren't the only challenges.
+
+Rusty-machine doesn't so much try to solve these problems. Instead it aims to make it easy
+to navigate the solutions yourself.
+</aside>
+</section>
 
 <section data-markdown>
 
@@ -255,6 +284,10 @@ There are lots of different ways to train models and on top of that many ways to
 </section>
 
 <section data-markdown>
+## How does rusty-machine (try to) keep things simple?
+</section>
+
+<section data-markdown>
 ## Using traits
 
 - A clean, simple model API
@@ -262,7 +295,8 @@ There are lots of different ways to train models and on top of that many ways to
 - Reusable components within the library
 
 Note:
-As seen before, rusty-machine uses traits as its foundation.
+As seen before, rusty-machine uses the `Model` trait as its foundation.
+This is the primary way we keep things clean and simple.
 
 In Rust a trait defines an interface - a set of functions which the implementor should define.
 
@@ -302,6 +336,8 @@ pub trait Kernel {
 
 <aside class="notes">
 An SVM is a model which is generally used for classification. The behaviour of the SVM is governed by a <i>kernel</i>.
+A kernel is essentially a function which obeys some properties (which I won't go into here,
+there are good resources online).
 
 Here we allow the kernel to be generic while providing some sensible defaults.
 
@@ -337,6 +373,9 @@ impl&lt;T, U> Kernel for KernelSum&lt;T, U>
 </code></pre>
 
 <aside class="notes">
+One property of kernels is that the sum of two kernels is also a kernel.
+i.e. K on the right also has all the properties of a kernel itself.
+
 We can override the `Add` trait to allow complex combinations of kernels.
 </aside>
 </section>
@@ -364,7 +403,7 @@ We can override the `Add` trait to allow complex combinations of kernels.
 <section>
 <h2>Reusability</h2>
 
-<p>We use traits to define common components, e.g. <i>Kernels</i> or <i>Gradient Descent Solvers</i>.</p>
+<p>We use traits to define common components, e.g. <i>Kernels</i>.</p>
 
 <p class="fragment" data-fragment-index="1">These components can be swapped in and out of models.</p>
 
@@ -380,20 +419,25 @@ For example - in other languages how can we be sure that the kernel function won
 
 </section>
 
-<section data-markdown>
-## Reusability Example
+<section>
+<h2>Reusability Example</h2>
+<h4>Gradient Descent Solvers</h4>
 
-All _Gradient Descent Solvers_ implement this trait.
+<p>We use Gradient Descent to minimize an objective function.</p>
 
-```
+<span class="fragment">
+All <i>Gradient Descent Solvers</i> implement this trait.
+
+<pre><code class="hljs rust">
 /// Trait for gradient descent algorithms. (Some things omitted)
 pub trait OptimAlgorithm&lt;M: Optimizable> {
     /// Return the optimized parameter using gradient optimization.
     fn optimize(&amp;self, model: &amp;M, ...) -> Vec&lt;f64>;
 }
-```
+</code></pre>
 
-The **Optimizable** trait is implemented by a model which is differentiable.
+<p>The <b>Optimizable</b> trait is implemented by a model which is differentiable.</p>
+</span>
 
 </section>
 
@@ -489,7 +533,7 @@ I could certainly use the error handling more frequently - especially within rus
 <ul>
 <li>Trait system is amazing.</li>
 <li>Error handling is amazing.</li>
-<li>Performance focused code without relying on heavy dependencies*.</li>
+<li>Performance focused code*.</li>
 </ul>
 
 <p class="fragment">* Rusty-machine needs some work, but the future looks bright!</p>
@@ -498,8 +542,11 @@ I could certainly use the error handling more frequently - especially within rus
 Historically we prototype in high level languages and then rewrite performance critical parts.
 
 Traits - Clean, extensible, homogenous API.
-Performance - A bold claim right now... But the potential is there for us to prototype and achieve high performance code in the same environment.
-Insights - More from a developers points of view; it is useful to have to think about how the model should be structured. What data does it need to own, which parts can be made modular without adding unneeded complexity, etc.
+Performance - A bold claim right now... But the potential is there for us to prototype
+and achieve high performance code in the same environment.
+Insights - More from a developers points of view; it is useful to have to think about how the
+model should be structured. What data does it need to own, which parts can be made modular without
+adding unneeded complexity, etc.
 </aside>
 </section>
 
@@ -519,7 +566,7 @@ that are much harder to achieve in other languages as pleasant-to-use as Rust.
 
 At the moment - experimentation, non-performance critical applications.
 
-In the future - quick, extensible modeling.
+In the future - quick, safe and powerful modeling.
 
 Note:
 For now it would be unwise to use this for anything serious. Except maybe if the benefits of Rust outweigh performance and accuracy.
@@ -528,10 +575,21 @@ In the future, rusty-machine will try to enable rapid prototyping that can be ea
 
 </section>
 
+<section data-markdown>
+## Rust and ML in general
+
+Note:
+Rust is well poised to make an impact in the machine learning space.
+
+It's excellent tooling and modern design are valuable for ML - and the
+benefit of performance with minimal effort (once you're past wrestling with the
+borrow checker) is huge.
+</section>
+
 <section>
 <h2>What's next?</h2>
 <ul>
-<li class="fragment fade-up">Optimizing and stablizing existing models.</li>
+<li class="fragment fade-up">Optimizing and stabilizing existing models.</li>
 <li class="fragment fade-up">Providing optional use of BLAS/LAPACK/CUDA/etc.</li>
 <li class="fragment fade-up">Addressing lack of tooling.</li>
 </ul>
