@@ -20,6 +20,7 @@ MODEL_CENTROIDS = np.array([[-0.645, -0.514],[-0.153, 0.630]])
 def read_samples_in(input_file):
 	return np.loadtxt(input_file, delimiter=',')
 
+
 def plot_samples(input_file):
 	samples = read_samples_in(input_file)
 
@@ -28,6 +29,7 @@ def plot_samples(input_file):
 	plt.ylabel("y")
 	plt.savefig("../k_means_samples.jpg")
 	plt.show()
+
 
 def plot_samples_with_original_centroids(input_file):
 	samples = read_samples_in(input_file)
@@ -58,7 +60,22 @@ def plot_samples_with_model_centroids(input_file):
 	plt.show()
 
 
+def plot_classified_samples(input_file):
+	samples = read_samples_in(input_file)
+
+	plt.figure(figsize=(10,7))
+	ax = plt.gca()
+
+	plt.scatter(samples[:,0], samples[:,1], c=['g' if sample == 0 else 'b' for sample in samples[:,2]], lw=0)
+	
+	plt.xlabel("x")
+	plt.ylabel("y")
+	plt.savefig("../k_means_classified_samples.jpg")
+	plt.show()
+
+
 if __name__ == '__main__':
 	plot_samples('k_means_samples.csv')
 	plot_samples_with_original_centroids('k_means_samples.csv')
 	plot_samples_with_model_centroids('k_means_samples.csv')
+	plot_classified_samples('k_means_samples.csv')
