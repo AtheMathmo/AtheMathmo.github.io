@@ -74,8 +74,8 @@ We'll walk through some basic concepts in machine learning that help us to under
 <h2>Some examples</h2>
 
 <ul>
-    <li class="fragment fade-down" data-fragment-index="1">Predicting whether an image contains a cat or a dog</li>
-    <li class="fragment fade-down" data-fragment-index="3">Predicting rent increase</li>
+    <li class="fragment fade-down" data-fragment-index="1">Predicting rent increase</li>
+    <li class="fragment fade-down" data-fragment-index="3">Predicting whether an image contains a cat or a dog</li>
     <li class="fragment fade-down" data-fragment-index="5">Understanding hand written digits</li>
 </ul>
 
@@ -84,11 +84,11 @@ We'll walk through some basic concepts in machine learning that help us to under
 <span style="position:relative; height: 800px;">
     <h4 class="fragment fade-up" data-fragment-index="2">Data set might be:</h4>
     <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
-            <p class="fragment fade-out" data-fragment-index="3"><i>labelled</i> pictures of cats and dogs.</p>
+            <p class="fragment fade-out" data-fragment-index="3">rent prices and other facts about the residence.</p>
     </span>
     <span class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
         <p class="fragment fade-out" data-fragment-index="5">
-            rent prices and other facts about the houses.
+            <i>labelled</i> pictures of cats and dogs.
         </p>
     </span>
     <p class="fragment fade-up" data-fragment-index="6" style="position: absolute; display: block; height: 400px; width: 800px;">
@@ -108,37 +108,6 @@ to predict what your rent will be.
 </aside>
 
 </section>
-
-<!-- Skipping the slides about learning types..
-<section>
-
-In machine learning we have <b>Supervised</b> and <b>Unsupervised</b> learning.
-
-<p class="fragment fade-up" data-fragment-index="1">Supervised - We have labelled <i>input data</i></p>
-<p class="fragment fade-up" data-fragment-index="3">Unsupervised - We have unlabelled <i>input data</i></p>
-
-<span style="position:relative; height: 800px;">
-    <span class="fragment fade-up" data-fragment-index="2" style="position: absolute; display: block; height: 400px; width: 800px;">
-        <span class="fragment fade-out" data-fragment-index="3">
-            <img src="{{ site.url }}/assets/cat-in-suit.jpg" style="border-radius: 20px;" >
-        </span>
-    </span>
-    <span class="fragment fade-up" data-fragment-index="4" style="position: absolute; display: block; height: 400px; width: 800px;">
-        <img src="{{ site.url }}/assets/dog-headphones.jpg" style="border-radius: 20px;" >
-    </span>
-</span>
-
-<br><br><br><br><br><br><br><br>
-
-<aside class="notes">
-Supervised example - We have pictures of cats and dogs which are labelled as such. Maybe we want to teach the machine to identify new cats and dogs from just their pictures.
-
-UnSupervised example - We have just the pictures without labels. Maybe we want the machine to separate the set of photos in two groups.
-
-We also have some others. Semi-Supervised, Reinforcement - we wont go into these.
-</aside>
-</section>
- -->
 
 <section>
 <h2>Some terminology</h2>
@@ -195,9 +164,9 @@ pub trait Model<T, U> {
 </code></pre>
 
 <aside class="notes">
-This trait is used to represent a model.
+In Rust a trait defines an interface - a set of functions which the implementor should define.
 
-It is simplified a little from the actual traits used.
+This trait is used to represent a model. It is simplified a little from the actual traits used.
 </aside>
 </section>
 
@@ -237,9 +206,6 @@ let mut model = KMeansClassifier::new(2);
 // Train the model
 model.train(&samples);
 
-// Get the model centroids (the center of each cluster)
-let centroids : Matrix&lt;T> = model.centroids().as_ref().unwrap();
-
 // Predict which cluster each point belongs to
 println!("Classifying the samples...");
 let classes = model.predict(&samples);
@@ -266,7 +232,7 @@ K-Means works in roughly the following way:
 
 <h2>K-Means Classification</h2>
 
-<img src="{{ site.url }}/assets/k_means_samples_with_model.jpg" class="stretch" style="border-radius: 20px;">
+<img src="{{ site.url }}/assets/k_means_classified_samples.jpg" class="stretch" style="border-radius: 20px;">
 
 </section>
 
@@ -298,7 +264,8 @@ Note:
 As seen before, rusty-machine uses the `Model` trait as its foundation.
 This is the primary way we keep things clean and simple.
 
-In Rust a trait defines an interface - a set of functions which the implementor should define.
+We use traits to try and _hide_ as much of the machine learning complexity as possible.
+This is while keeping it in reach for users who need it.
 
 </section>
 
@@ -423,7 +390,7 @@ For example - in other languages how can we be sure that the kernel function won
 <h2>Reusability Example</h2>
 <h4>Gradient Descent Solvers</h4>
 
-<p>We use Gradient Descent to minimize an objective function.</p>
+<p>We use Gradient Descent to minimize a <i>cost</i> function.</p>
 
 <span class="fragment">
 All <i>Gradient Descent Solvers</i> implement this trait.
@@ -431,7 +398,7 @@ All <i>Gradient Descent Solvers</i> implement this trait.
 <pre><code class="hljs rust">
 /// Trait for gradient descent algorithms. (Some things omitted)
 pub trait OptimAlgorithm&lt;M: Optimizable> {
-    /// Return the optimized parameter using gradient optimization.
+    /// Return the optimized parameters using gradient optimization.
     fn optimize(&amp;self, model: &amp;M, ...) -> Vec&lt;f64>;
 }
 </code></pre>
@@ -439,21 +406,84 @@ pub trait OptimAlgorithm&lt;M: Optimizable> {
 <p>The <b>Optimizable</b> trait is implemented by a model which is differentiable.</p>
 </span>
 
+
+<aside class="notes">
+Our models have a cost function - e.g. for predicting rent our cost might be the squared distance
+between our models estimate and the actual value. When our cost function is differentiable we can
+use gradient descent.
+
+The idea is that by taking steps down the steepest slope we get closer to the minimum cost.
+
+The OptimAlgorithm trait specifies how we shall do this downward stepping towards the minimum.
+The Optimizable trait specifies how the derivative of the cost function will be computed.
+</aside>
 </section>
 
 <section>
 <h2>Creating a new model</h2>
 <h3>With gradient descent optimization</h3>
 
-<ol>
-    <li class="fragment">Create the model struct.</li>
-    <li class="fragment">Implement <b>Optimizable</b> for model.</li>
-    <li class="fragment">In the <b>train</b> function use an <b>OptimAlgorithm</b> to compute the optimized parameters.</li>
-</ol>
+<p class="fragment" data-fragment-index="1">Define the model.</p>
+<pre class="fragment" data-fragment-index="2"><code class="hljs rust">
+/// Cost function is: f(x) = (x-c)^2
+struct XSqModel {
+    c: f64,
+}
+</code></pre>
+
+<p class="fragment" data-fragment-index="3">You can think of this model as <i>learning</i> the value <b>c</b>.</p>
 
 <aside class="notes">
 The bulk of the work will be in step 2 - which is where we compute the gradient of the model.
 </aside>
+
+</section>
+
+<section>
+<h2>Creating a new model</h2>
+<h3>With gradient descent optimization</h3>
+
+<p class="fragment">Implement <b>Optimizable</b> for model.</p>
+
+<pre class="fragment" ><code class="hljs rust">
+/// Cost function is: f(x) = (x-c)^2
+struct XSqModel {
+    c: f64,
+}
+
+impl Optimizable for XSqModel {
+    /// 'params' here is 'x'
+    fn compute_grad(&amp;self, params: &amp;[f64], ...) -> Vec&lt;f64> {
+         vec![2f64 * (params[0] - self.c)]
+    }
+}
+</code></pre>
+
+</section>
+
+<section>
+<h2>Creating a new model</h2>
+<h3>With gradient descent optimization</h3>
+
+<p class="fragment">Use an <b>OptimAlgorithm</b> to compute the optimized parameters.</p>
+
+<pre class="fragment" ><code class="hljs rust">
+/// Cost function is: f(x) = (x-c)^2
+struct XSqModel {
+    c: f64,
+}
+
+impl Optimizable for XSqModel {
+    /// 'params' here is 'x'
+    fn compute_grad(&amp;self, params: &amp;[f64], ...) -> Vec&lt;f64> {
+         vec![2f64 * (params[0] - self.c)]
+    }
+}
+
+let x_sq = XSqModel { c : 1.0 }
+let gd = GradientDesc::default();
+let optimal = gd.optimize(&amp;x_sq, ...); // Should be close to 1.0!
+</code></pre>
 
 </section>
 
@@ -462,6 +492,7 @@ The bulk of the work will be in step 2 - which is where we compute the gradient 
 ## What can rusty-machine do?
 
 - K-Means Clustering
+- DBSCAN Clustering
 - Linear Regression
 - Logistic Regression
 - Generalized Linear Models
@@ -556,6 +587,8 @@ adding unneeded complexity, etc.
 Most importantly for me - safe control over memory.
 
 Note:
+Specifically with the ownership/lifetimes mechanic.
+
 We choose when a model needs ownership. When to allocate new memory for operations. These are things
 that are much harder to achieve in other languages as pleasant-to-use as Rust.
 
@@ -584,6 +617,9 @@ Rust is well poised to make an impact in the machine learning space.
 It's excellent tooling and modern design are valuable for ML - and the
 benefit of performance with minimal effort (once you're past wrestling with the
 borrow checker) is huge.
+
+Some difficulty doing 'exploratory analysis' in Rust compared to say Python.
+But I think in the future Rust could definitely hold it's own.
 </section>
 
 <section>
@@ -594,6 +630,10 @@ borrow checker) is huge.
 <li class="fragment fade-up">Addressing lack of tooling.</li>
 </ul>
 
+<aside class="notes">
+By lack of tooling I mean for data handling mostly.
+</aside>
+
 </section>
 
 <section data-markdown>
@@ -601,6 +641,12 @@ borrow checker) is huge.
 
 - Specialization
 - Growth of Float/Complex generics
+- Continued effort from community
+
+Note:
+I really like the direction of the language so far and look forward to what will follow.
+
+The community is great as I'm sure most would confirm. That drive and enthusiasm will create great things.
 
 </section>
 

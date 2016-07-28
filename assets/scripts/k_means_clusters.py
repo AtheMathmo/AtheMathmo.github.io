@@ -57,8 +57,21 @@ def plot_samples_with_model_centroids(input_file):
 	plt.savefig("../k_means_samples_with_model.jpg")
 	plt.show()
 
+def plot_classified_samples(input_file):
+	samples = read_samples_in(input_file)
+
+	plt.figure(figsize=(10,7))
+	ax = plt.gca()
+
+	plt.scatter(samples[:,0], samples[:,1], c=['g' if sample == 0 else 'b' for sample in samples[:,2]], lw=0)
+	
+	plt.xlabel("x")
+	plt.ylabel("y")
+	plt.savefig("../k_means_classified_samples.jpg")
+	plt.show()
 
 if __name__ == '__main__':
 	plot_samples('k_means_samples.csv')
 	plot_samples_with_original_centroids('k_means_samples.csv')
 	plot_samples_with_model_centroids('k_means_samples.csv')
+	plot_classified_samples('k_means_samples.csv')
