@@ -1,28 +1,42 @@
 ---
 layout: post
-title: Transposing in Rust
+title: In-place Transposition in Rust
 excerpt: "Should be simple..."
 comments: true
 ---
 
-In this blog post I'm going to talk about some work I put into getting an optimized in-place transposition algorithm working in [rulinalg](https://github.com/AtheMathmo/rulinalg) - a pure Rust linear algebra library. I'm not going to go into much detail on how the algorithm works - but will instead focus on my efforts to optimize it in Rust.
+# In-place Transposition in Rust
 
-## Transposing is easy, right?
+In this blog post I'm going to talk about getting an optimized in-place transposition algorithm working in [rulinalg](https://github.com/AtheMathmo/rulinalg) - a pure Rust linear algebra library. I'm not going to go into much detail on how the algorithm works - but will instead focus on my efforts to optimize it in Rust.
+
+## What is rulinalg?
+
+[Rulinalg](https://github.com/AtheMathmo/rulinalg) is a linear algebra library written entirely in Rust. It was originally created as part of [rusty-machine](https://github.com/AtheMathmo/rusty-machine) -
+a machine learning library providing implementations of common machine learning algorithms.
+For a linear algebra library to support machine learning applications it has to be able to deal with large amounts of data effectively.
+
+### Transposing?
+
+Transposing is an essential part of any linear algebra framework. Transposing is a linear algebra operation which reflects a matrix along its diagonal. This means swapping each element above the diagonal with its counterparts below.
 
 <figure style="width: 80%; display: block; margin-right: auto; margin-left: auto;">
     <img src="{{ site.url }}/assets/transpose.svg" alt="Transposition" style="border-radius: 30px; width: 100%; background: white;"  preserveAspectRatio="xMinYMin slice"/>
     <figcaption>Transposing a 2x3 matrix into a 3x2 matrix. The raw data in row-major order is shown above each matrix.</figcaption>
 </figure>
 
-Transposing is an essential part of any linear algebra framework. And as such it has been supported in [rulinalg](https://github.com/AtheMathmo/rulinalg) for quite some time. However in rulinalg we only provide a transpose method for doing _out-of-place_ transposition. This means we allocate a new block of memory for the transpose and copy the matrix data there whilst transposing it.
+This is an exceedingly common operation and will arise very often in machine learning. In rusty-machine you'll see transposing in _Neural Nets_, _Linear Models_, _Gaussian Mixture Models_ and more. Because of this it is important to provide an efficient implementation.
 
-Most of the time this works fine - but what if our matrix is so big that we can barely hold it in memory? In machine learning this isn't as ridiculous as it sounds - big data is the name of the game. In this case we cannot allocate new memory and we resort to something called _inplace transposition_.
+### Transposing is easy, right?
+
+Transposition has been supported in rulinalg for quite some time. However in rulinalg we only provide a transpose method for doing _out-of-place_ transposition. This means we allocate a new block of memory for the transpose and copy the matrix data there whilst transposing it.
+
+Most of the time this works fine - but what if our matrix is so big that we can barely hold it in memory? In machine learning this isn't as ridiculous as it sounds - big data is the name of the game. In this case we cannot allocate new memory and we resort to something called _in-place transposition_.
 
 _Note: Some frameworks like [numpy](http://www.numpy.org/) have clever ways to get around this problem. I discuss this a little at the end._
 
-# Inplace transposing
+## In-place transposing
 
-Out of place transposition is a mostly simple thing. In rulinalg it looks like this:
+Out-of-place transposition is a mostly simple thing. In rulinalg it looks like this:
 
 ```rust
 impl<T: Copy> Matrix<T> {
@@ -56,14 +70,13 @@ _Note that rulinalg uses row-major order. Additionally the above algorithm is na
 
 Here we are copying the rows from `self` into the columns of our new matrix. We have some unsafe code here too to speed things along.
 
-
-So _out of place_ is fairly simple, how about _inplace_? Turns out not so much...
+So _out-of-place_ is fairly simple, how about _in-place_? As it turns out, not so much...
 For square matrices it is simple enough - we can just `swap` the elements above the diagonal with those below.
 But for arbitrary rectangular matrices this is not the case.
 
 ### So how?
 
-There are a few ways we can achieve inplace transposing. One of the more common techniques is a method known as cycle following.
+There are a few ways we can achieve in-place transposing. One of the more common techniques is a method known as cycle following.
 This stems from the idea that a transposition is simply a permutation of the underlying data -
 and [all permutations can be represented as disjoint cycles](https://en.wikipedia.org/wiki/Permutation#Cycle_notation).
 If we can find all of these independent cycles we can rotate the underlying elements and achieve our transposition.
@@ -209,7 +222,7 @@ It looks like things were already behaving pretty nicely for me - but this chang
 ## Arithmetic strength reduction
 
 Our indexing operations have a lot of division and mod computation. We can use a technique known as arithmetic strength reduction to improve things here.
-I wont spend too much time on this but if people are interested I'd be happy to share a little more of what I learnt.
+I wont spend too much time on this but if people are interested I'd be happy to share a little more of what I learned.
 The core idea is that we can replace repeated division and modulus operations with multiplication which is more efficient.
 
 The implementation was mostly straight forward in rust with a minor hiccup where I relied on some `u128` computations.
@@ -234,7 +247,7 @@ Still a big improvement on our earlier attempts! And the good news is that [128 
 
 Now at this point I should say that I was a little concerned.
 I came into this with very little background knowledge and it seemed iffy to me that my implementation was still so much slower than the out-of-place transposition.
-I figured the time taken to allocate those large chunks of memory should add up. It turns out this isn't totally unexpected - inplace transposition is just a more expensive operation.
+I figured the time taken to allocate those large chunks of memory should add up. It turns out this isn't totally unexpected - in-place transposition is just a more expensive operation.
 Fortunately I can close the gap on square matrices by implementing a simple `ptr::swap` algorithm:
 
 ```
@@ -251,7 +264,7 @@ test linalg::transpose::inplace_transpose_1000_1000    ... bench:   3,103,315 ns
 For now I'm pretty happy with this code and will be merging it into rulinalg soon.
 But in the future there are some other optimizations I'd like to try out.
 
-For both out-of-place and inplace my algorithms incur unneccessary cache misses.
+For both out-of-place and in-place my implementations incur unneccessary cache misses.
 The Catanzaro paper describes a technique to improve this and there are simple extensions to the more naive algorithms too.
 
 Additionally the inplace algorithm really comes into its own when it's parallelized.
@@ -259,12 +272,12 @@ I didn't want to try fiddling with this on a first implementation but it will be
 
 I think it's also quite important that I talk about an alternative approach to the above.
 If you `transpose` in [numpy](http://www.numpy.org/) it is an effectively free operation. Because of the way arrays are represented in numpy the strides and dimensions are simply swapped.
-I think this is the first time that not leaning more heavily on the strided view system has felt like a significant hinderance.
+I think this is the first time that not leaning more heavily on the strided view system has felt like a significant hindrance.
 This is an approach that I may look to adopt in the future but am choosing not to for now.
 If we go down this road we will have a much harder time optimizing existing algorithms -
-for example we can no longer gaurantee that our rows are contiguous (an assumption which is used for vectorization and cache utilization). In addition to this the existing code will have to become more complex.
+for example we can no longer guarantee that our rows are contiguous (an assumption which is used for vectorization and cache utilization). In addition to this the existing code will have to become more complex.
 
-If you do need fast inplace transposing in rust you could take a look at [ndarray](https://github.com/bluss/rust-ndarray) - which uses an approach similar to numpy.
+If you do need _free_ in-place transposing in rust you could take a look at [ndarray](https://github.com/bluss/rust-ndarray) - which uses an approach similar to numpy.
 
 ## References
 
