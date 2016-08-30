@@ -5,8 +5,6 @@ excerpt: "Should be simple..."
 comments: true
 ---
 
-# In-place Transposition in Rust
-
 In this blog post I'm going to talk about getting an optimized in-place transposition algorithm working in [rulinalg](https://github.com/AtheMathmo/rulinalg) - a pure Rust linear algebra library. I'm not going to go into much detail on how the algorithm works - but will instead focus on my efforts to optimize it in Rust.
 
 ## What is rulinalg?
