@@ -267,7 +267,7 @@ But in the future there are some other optimizations I'd like to try out.
 For both out-of-place and in-place my implementations incur unneccessary cache misses.
 The Catanzaro paper describes a technique to improve this and there are simple extensions to the more naive algorithms too.
 
-Additionally the inplace algorithm really comes into its own when it's parallelized.
+I suspect the in-place algorithm really comes into its own when it's parallelized.
 I didn't want to try fiddling with this on a first implementation but it will be exciting to see how big an improvement we can get!
 
 I think it's also quite important that I talk about an alternative approach to the above.
@@ -278,6 +278,12 @@ If we go down this road we will have a much harder time optimizing existing algo
 for example we can no longer guarantee that our rows are contiguous (an assumption which is used for vectorization and cache utilization). In addition to this the existing code will have to become more complex.
 
 If you do need _free_ in-place transposing in rust you could take a look at [ndarray](https://github.com/bluss/rust-ndarray) - which uses an approach similar to numpy.
+
+## Summary
+
+So what did I learn? Mostly that this was far more difficult than I expected and not quite as useful as hoped. But I think that along the way there were a lot of valuable lessons about optimization - many of which I will be able to carry with me when exploring optimization in future.
+
+Additionally I'm reminded that trying to compete with long-standing linear algebra frameworks like BLAS and LAPACK is very, very difficult.
 
 ## References
 
