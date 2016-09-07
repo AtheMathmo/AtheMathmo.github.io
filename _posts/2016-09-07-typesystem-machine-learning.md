@@ -2,7 +2,7 @@
 layout: post
 title: A type system for Machine Learning
 excerpt: "What else can Rust do to help machine learning?"
-comments: false
+comments: true
 ---
 
 This post is about [rusty-machine](https://github.com/AtheMathmo/rusty-machine), a pure-rust machine learning library.
@@ -130,11 +130,11 @@ pub trait Model {
 }
 ```
 
-I've also chucked in the use of some [associated types](https://doc.rust-lang.org/book/associated-types.html). This is mostly to keep code that is generic over models (like cross validation) a little cleaner.
+_I've also chucked in the use of some [associated types](https://doc.rust-lang.org/book/associated-types.html). This is mostly to keep code that is generic over models (like cross validation) a little cleaner._
 
 #### What's changed here?
 
-We have split out into two traits. The `Trainer` describe the training process and we change the notion of a `Model` to be a trained model which is ready to predict from new data.
+We have split out into two traits. The `Trainer` describes the training process and we change the notion of a `Model` to be trained and ready to predict from new data.
 
 Note that we've also left the associated types on `M` unconstrained in the `Trainer` trait. This is intentional (though not necessary) - we may want to train a model on a `Matrix` but then predict from a `MatrixSlice` (which is synonymous to the `Vec<T>` - `&[T]` relationship). Until we have [custom DSTs](https://github.com/rust-lang/rfcs/pull/1524#issuecomment-241809441) we have to treat these as different types within [rulinalg](https://github.com/AtheMathmo/rulinalg).
 
@@ -169,9 +169,9 @@ let outputs = model.predict(&new_data).expect("Failed to predict new classes");
 
 ### Some other advantages
 
-Serialization becomes more natural. We can now serialize a model once it has been trained and reuse the model to make future predictions. This was certainly possible before but with the new traits serializing a model should consists of saving only the data relevent to future predictions.
+Serialization becomes more natural. We can now serialize a model once it has been trained and reuse the model to make future predictions. This was certainly possible before but with the new traits serializing a model should consists of saving only the data relevant to future predictions.
 
-In machine learning we sometimes want to incrementally update our model using incoming data - this is sometimes called [online learning](https://en.wikipedia.org/wiki/Online_machine_learning). We can capture things like online learning more easily by tackling `Model`s and `Trainer`s separately. Once again this is possible with the existing traits but is a little cleaner here. For example we could imagine something like the following (illustrative only)
+In machine learning we sometimes want to incrementally update our model using incoming data - this is sometimes called [online learning](https://en.wikipedia.org/wiki/Online_machine_learning). We can capture things like online learning more easily by tackling `Model`s and `Trainer`s separately. Once again this is possible with the existing traits but is a little cleaner here. For example, we could imagine something like the following:
 
 ```rust
 impl IncrTrain for Trainer<M> {
@@ -183,7 +183,7 @@ impl IncrTrain for Trainer<M> {
 
 So if we try to incrementally train a `Trainer` we use `train` like normal. But if we incrementally train a `Model` we update our existing parameters.
 
-One final advantage is our code becoming tidier. Current models have a lot of `Option` fields which are filled during training - we can move these to the `Model`. The type system does the state-checking for us.
+One final advantage is our code becoming tidier. Current models have a lot of `Option` fields which are filled during training - we can move these to the `Model`. The type system now does the state-checking for us.
 
 ### The disadvantages
 
@@ -197,7 +197,7 @@ There are also some added difficulties with code organization. We often require 
 
 I started rusty-machine about 10 months ago and it was my first ever Rust project. Although the API has worked well so far - it could certainly do with an update (along with quite a few other areas of the library).
 
-Here I've spoken about some changes to rusty-machine. Adding `Result`s seems like an obvious improvement with no real down sides (compared to our current API). The second change I suggested is something I'm not so sure about. It offers a lot in terms of the API but I don't want to under estimate the effect of raising the complexity for new users. I'd love to get some feedback on whether this is the best approach to take.
+Here I've spoken about some changes to rusty-machine. Adding `Result`s seems like an obvious improvement with no real down-sides (compared to our current API). The second change I suggested is something I'm not so sure about. It offers a lot in terms of the API but I don't want to underestimate the effect of raising the complexity for new users. I'd love to get some feedback on whether this is the best approach to take.
 
 ## Notes
 
