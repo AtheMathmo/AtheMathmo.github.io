@@ -7,25 +7,27 @@ comments: true
 
 The first time I needed to profile a Rust application I came across [Llogiq](https://llogiq.github.io/)'s post - [Profiling Rust applications on Linux](https://llogiq.github.io/2015/07/15/profiling.html). This post was incredibly helpful to me and succeeded in getting me off the ground. After spending a little more time with Rust and needing to do a little more profiling I've discovered a few alternatives that I think make valuable additions. In this post I'll be writing about these in the hope that someone else may stumble upon it and get off the ground.
 
+This post is only relevant for profiling on Linux - though the `cpuprofiler` introduced _may_ work on any unix system.
+
 _Llogiq's post remains a very valuable resource and you should probably read it if you are planning on profiling._
 
 ## What is profiling?
 
 We use profiling to measure the performance of our applications - generally in a more fine-grained manner than benchmarking alone can provide. In fact, often with profiling we can reveal slow areas of code that we may not have suspected at all.
 
-To build a profile we monitor the application as it runs and record various information. This could be cpu cache misses, or total instructions within a function. This is a complicated task but fortunately there are a number of tools available to us - some of which are discussed in [Llogiq's blog post](https://llogiq.github.io/2015/07/15/profiling.html).
+To build a profile we monitor the application as it runs and record various information. For example, cpu cache misses or total instructions within a function. This is a complicated task but fortunately there are a number of tools available to us - some of which are discussed in [Llogiq's blog post](https://llogiq.github.io/2015/07/15/profiling.html).
 
 In this post I'll talk about some alternatives and more recent developments that make profiling Rust applications a little easier.
 
 
 ## [cargo-profiler](https://github.com/pegasos1/cargo-profiler)
 
-Cargo profiler is an awesome tool from [pegasos1](https://github.com/pegasos1) that makes much of the profiling work easier. There are clear [installation instructions](https://github.com/pegasos1/cargo-profiler#to-install) in the repo's README.
+Cargo profiler is an awesome tool from [pegasos1](https://github.com/pegasos1) that makes much of the profiling work easier. There are clear [installation instructions](https://github.com/pegasos1/cargo-profiler#to-install) in the project README.
 
 Essentially cargo-profiler wraps some of the profilers described in Llogiq's blog post to provide an easier interface.
 
 ```
-cargo profiler callgrind --release
+$ cargo profiler callgrind --release
 
 Compiling nnet-prof in release mode...
 
@@ -51,7 +53,7 @@ Total Instructions...41,302,042,769
 Not only does cargo-profiler make it easier to use these profiling tools - it also lets you filter and sort the results. Below I take only the top 6 results by total memory reads (Dr).
 
 ```
-cargo profiler cachegrind --release -n 6 --sort dr
+$ cargo profiler cachegrind --release -n 6 --sort dr
 
 Compiling nnet-prof in release mode...
 
@@ -89,7 +91,7 @@ But the real winning points for me were the powerful output formats from this pr
 
 ### How do I use it?
 
-There are detailed [installation instructions](https://github.com/AtheMathmo/cpuprofiler#installation) in the repos README. The short of it is:
+There are detailed [installation instructions](https://github.com/AtheMathmo/cpuprofiler#installation) in the project README. The short of it is:
 
 #### Install gperftools (which includes the cpu profiler).
 
@@ -149,5 +151,6 @@ compelling story for profiling Rust - though of course there is still a way to g
 
 I have only tested the above on linux - though supposedly `cpuprofiler` will work on any unix system.
 
-In the future I'd love to try and get a simple statistical sampling profiler working in Rust (using libbacktrace). And also
-providing support within cargo-profiler for cpuprofiler would be a cool addition (I think!).
+In the future I'd love to try and get a simple statistical sampling profiler working in Rust (using [libbacktrace](https://github.com/rust-lang/rust/tree/master/src/libbacktrace)). I'm certainly no expert and if anyone has any pointers on doing this I'd love to hear them.
+
+Providing support within cargo-profiler for cpuprofiler would be a cool addition (I think!).
